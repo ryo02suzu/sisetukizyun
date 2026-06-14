@@ -622,6 +622,7 @@ export const standards: DentalFacilityStandard[] = [
     official_name: "歯科訪問診療料の注11に規定する地域医療連携体制加算",
     common_name: "地域連携",
     code_number: "2-132",
+    code_number_bureau: "東海北陸 令和8",
     notification_ref: "歯科訪問診療料（C000）注11 / 保医発0305第8号",
     category: "特掲診療料",
     new_or_revised_r8: "継続",
@@ -670,7 +671,7 @@ export const standards: DentalFacilityStandard[] = [
       formula: "300 × 月間算定回数 × 10円",
     },
     verify_flags: [
-      "整理番号2-132・様式21は厚生局一覧で要確認（患者交付は様式21の2・21の3）",
+      "患者への文書交付は様式21の2・21の3（届出様式は様式21）",
       "令和8固有の経過措置",
     ],
     last_updated: "2026-06-14",
@@ -898,6 +899,7 @@ export const standards: DentalFacilityStandard[] = [
     official_name: "口腔粘膜処置（レーザー機器加算）に係る施設基準",
     common_name: "口腔粘膜（レーザー）",
     code_number: "2-296",
+    code_number_bureau: "東海北陸 令和8",
     notification_ref: "口腔粘膜処置（I029-3）/ レーザー機器加算（J200-4-2）/ 保医発0305第8号",
     category: "特掲診療料",
     new_or_revised_r8: "継続",
@@ -931,7 +933,7 @@ export const standards: DentalFacilityStandard[] = [
       ],
       formula: "30 × 月間算定回数 × 10円（レーザー機器加算は別途）",
     },
-    verify_flags: ["整理番号2-296は一次未確認（厚生局令和8一覧で要確認）"],
+    verify_flags: [],
     last_updated: "2026-06-14",
     source_version: "告示第69号（r08歯科点数表 I029-3=30点・J200-4-2=50/100/200点を確認）",
     sources: [KANTO_TOKUTEI, "https://kouseikyoku.mhlw.go.jp/shikoku/r6-t49-9.pdf"],
@@ -990,6 +992,7 @@ export const standards: DentalFacilityStandard[] = [
     official_name: "歯科治療時医療管理料に係る施設基準",
     common_name: "医管",
     code_number: "2-88",
+    code_number_bureau: "東海北陸 令和8",
     notification_ref: "歯科治療時医療管理料（B004-6-2）/ 保医発0305第8号",
     category: "特掲診療料",
     new_or_revised_r8: "継続",
@@ -1034,7 +1037,7 @@ export const standards: DentalFacilityStandard[] = [
       ],
       formula: "45 × 月間算定回数 × 10円",
     },
-    verify_flags: ["整理番号2-88は一次未確認", "歯科医師の経験要件"],
+    verify_flags: ["歯科医師の経験要件"],
     last_updated: "2026-06-14",
     source_version: "告示第71号（厚生局令和8 特掲一覧 2-88・様式17）",
     sources: [KANTO_TOKUTEI, KINKI_TOKUTEI],
@@ -1044,4 +1047,154 @@ export const standards: DentalFacilityStandard[] = [
 /** id で施設基準を引く。 */
 export function getStandardById(id: string): DentalFacilityStandard | undefined {
   return standards.find((s) => s.id === id);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 近畿厚生局 令和8年度の公式届出様式PDF（令和8年4月20日付ページ）。
+// クリックで厚労省の正規PDFを開き、ブラウザの印刷でそのまま出力できる（様式の自作はしない）。
+// 注意：様式PDF・整理番号は地方厚生局・改定年度ごとに異なる。ここでは「近畿厚生局・令和8年度」の値。
+// 出典: https://kouseikyoku.mhlw.go.jp/kinki/shinsei/shido_kansa/shitei_kijun/kihon_r08k.html
+//       https://kouseikyoku.mhlw.go.jp/kinki/shinsei/shido_kansa/shitei_kijun/tokukei_r08t.html
+// ─────────────────────────────────────────────────────────────────────────────
+const KINKI_PDF = "https://kouseikyoku.mhlw.go.jp/kinki/";
+const BESSHI7 = KINKI_PDF + "r8-1-000-01.pdf"; // 基本診療料 共通届出書（別添7）
+const BESSHI2 = KINKI_PDF + "r8-2-000-01.pdf"; // 特掲診療料 共通届出書（別添2）
+
+export interface OfficialFormLink {
+  label: string;
+  url: string;
+}
+export interface OfficialForms {
+  /** 厚生局・年度（例: '近畿 令和8'）。 */
+  bureau: string;
+  /** 共通届出書（別添7/別添2）のPDF。 */
+  common: OfficialFormLink;
+  /** 施設基準ごとの様式PDF。 */
+  forms: OfficialFormLink[];
+}
+
+/** id → 近畿厚生局 令和8の公式様式PDF。 */
+export const officialForms: Record<string, OfficialForms> = {
+  ha_shoshin: {
+    bureau: "近畿 令和8",
+    common: { label: "共通届出書 別添7", url: BESSHI7 },
+    forms: [
+      { label: "別添7（歯初診）", url: KINKI_PDF + "r8-1-016.pdf" },
+      { label: "様式2の6", url: KINKI_PDF + "r8-k02-6.pdf" },
+    ],
+  },
+  gai_anzen_1: {
+    bureau: "近畿 令和8",
+    common: { label: "共通届出書 別添7", url: BESSHI7 },
+    forms: [
+      { label: "別添7（外安全1）", url: KINKI_PDF + "r8-1-018.pdf" },
+      { label: "様式4", url: KINKI_PDF + "r8-k04.pdf" },
+    ],
+  },
+  gai_kansen_1: {
+    bureau: "近畿 令和8",
+    common: { label: "共通届出書 別添7", url: BESSHI7 },
+    forms: [
+      { label: "別添7（外感染1）", url: KINKI_PDF + "r8-1-020.pdf" },
+      { label: "様式4", url: KINKI_PDF + "r8-k04.pdf" },
+    ],
+  },
+  ha_dx_1: {
+    bureau: "近畿 令和8",
+    common: { label: "共通届出書 別添7", url: BESSHI7 },
+    forms: [
+      { label: "別添7（歯医DX1）", url: KINKI_PDF + "r8-1-008.pdf" },
+      { label: "別添7（歯医DX2）", url: KINKI_PDF + "r8-1-008-2.pdf" },
+      { label: "様式1の6", url: KINKI_PDF + "r8-k01-6.pdf" },
+    ],
+  },
+  baseup_1: {
+    bureau: "近畿 令和8",
+    common: { label: "共通届出書 別添2", url: BESSHI2 },
+    forms: [
+      { label: "様式95〜100（統合）", url: KINKI_PDF + "r8-t95-100.pdf" },
+      { label: "様式94（特別事情届出書）", url: KINKI_PDF + "r8-t94.pdf" },
+    ],
+  },
+  kokan_kyo: {
+    bureau: "近畿 令和8",
+    common: { label: "共通届出書 別添2", url: BESSHI2 },
+    forms: [
+      { label: "別添2（口管強）", url: KINKI_PDF + "r8-2-089.pdf" },
+      { label: "様式17の2", url: KINKI_PDF + "r8-t17-2.pdf" },
+    ],
+  },
+  shien_shin_1: {
+    bureau: "近畿 令和8",
+    common: { label: "共通届出書 別添2", url: BESSHI2 },
+    forms: [
+      { label: "別添2（歯援診1）", url: KINKI_PDF + "r8-2-092.pdf" },
+      { label: "様式18", url: KINKI_PDF + "r8-t18.pdf" },
+    ],
+  },
+  ha_homon_chiiki_renkei: {
+    bureau: "近畿 令和8",
+    common: { label: "共通届出書 別添2", url: BESSHI2 },
+    forms: [
+      { label: "別添2（歯地連）", url: KINKI_PDF + "r8-2-132.pdf" },
+      { label: "様式21", url: KINKI_PDF + "r8-t21.pdf" },
+    ],
+  },
+  cadcam_kogaku: {
+    bureau: "近畿 令和8",
+    common: { label: "共通届出書 別添2", url: BESSHI2 },
+    forms: [
+      { label: "別添2（CAD/CAM冠・インレー）", url: KINKI_PDF + "r8-2-301.pdf" },
+      { label: "別添2（光学印象）", url: KINKI_PDF + "r8-2-300.pdf" },
+      { label: "様式50の2", url: KINKI_PDF + "r8-t50-2.pdf" },
+    ],
+  },
+  giko_renkei: {
+    bureau: "近畿 令和8",
+    common: { label: "共通届出書 別添2", url: BESSHI2 },
+    forms: [
+      { label: "別添2（技工連携1）", url: KINKI_PDF + "r8-2-298.pdf" },
+      { label: "別添2（技工連携2）", url: KINKI_PDF + "r8-2-299.pdf" },
+      { label: "様式50の2の2", url: KINKI_PDF + "r8-t50-2-2.pdf" },
+    ],
+  },
+  ushokugishososhaku: {
+    bureau: "近畿 令和8",
+    common: { label: "共通届出書 別添2", url: BESSHI2 },
+    forms: [
+      { label: "別添2（咀嚼機能検査）", url: KINKI_PDF + "r8-2-184.pdf" },
+      { label: "様式38の1の2", url: KINKI_PDF + "r8-t38-1-2.pdf" },
+    ],
+  },
+  gtr: {
+    bureau: "近畿 令和8",
+    common: { label: "共通届出書 別添2", url: BESSHI2 },
+    forms: [{ label: "別添2（GTR）※命名規則上ほぼ確実・要確認", url: KINKI_PDF + "r8-2-484.pdf" }],
+  },
+  laser_koku_nenmaku: {
+    bureau: "近畿 令和8",
+    common: { label: "共通届出書 別添2", url: BESSHI2 },
+    forms: [{ label: "様式49の9", url: KINKI_PDF + "r8-t49-9.pdf" }],
+  },
+  kikan_anzen_shika: {
+    bureau: "近畿 令和8",
+    common: { label: "共通届出書 別添2", url: BESSHI2 },
+    forms: [
+      { label: "別添2（機安歯）", url: KINKI_PDF + "r8-2-086.pdf" },
+      { label: "様式15", url: KINKI_PDF + "r8-t15.pdf" },
+    ],
+  },
+  ikan: {
+    bureau: "近畿 令和8",
+    common: { label: "共通届出書 別添2", url: BESSHI2 },
+    forms: [
+      { label: "別添2（医管）", url: KINKI_PDF + "r8-2-088.pdf" },
+      { label: "様式17", url: KINKI_PDF + "r8-t17.pdf" },
+    ],
+  },
+};
+
+/** id で近畿厚生局の公式様式を引く。 */
+export function getOfficialForms(id: string): OfficialForms | undefined {
+  return officialForms[id];
 }

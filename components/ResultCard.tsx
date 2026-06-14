@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { DiagnosisResult } from "@/lib/types";
-import { getStandardById } from "@/data/standards";
+import { getStandardById, getOfficialForms } from "@/data/standards";
 
 const VERDICT_LABEL: Record<DiagnosisResult["verdict"], string> = {
   eligible: "届出可能",
@@ -15,6 +15,7 @@ export default function ResultCard({ result }: { result: DiagnosisResult }) {
   const [loading, setLoading] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
   const standard = getStandardById(result.standardId);
+  const official = getOfficialForms(result.standardId);
 
   async function fetchExplanation() {
     setLoading(true);
@@ -157,8 +158,27 @@ export default function ResultCard({ result }: { result: DiagnosisResult }) {
             {standard.code_number_bureau ? `（${standard.code_number_bureau}）` : ""}
           </div>
 
+          {official && (
+            <div className="detail-row no-print">
+              <div className="detail-label">
+                公式様式PDF（{official.bureau}・クリックで開いて印刷）
+              </div>
+              <div className="form-links">
+                <a href={official.common.url} target="_blank" rel="noopener noreferrer">
+                  📄 {official.common.label}
+                </a>
+                {official.forms.map((f, i) => (
+                  <a key={i} href={f.url} target="_blank" rel="noopener noreferrer">
+                    📄 {f.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="detail-note">
-            ※ 整理番号・届出様式は地方厚生局・改定年度ごとに異なります。届出先（管轄）の厚生局の令和8年度の届出様式一覧で必ずご確認ください。
+            ※ 整理番号・届出様式・様式PDFは地方厚生局・改定年度ごとに異なります（上記は近畿厚生局
+            令和8年度）。届出先（管轄）の厚生局の令和8年度の届出様式一覧で必ずご確認ください。
           </div>
 
           {standard.transitional && (

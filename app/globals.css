@@ -721,3 +721,25 @@ input[type="number"] {
   border-radius: 6px;
   padding: 6px 10px;
 }
+
+.form-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.form-links a {
+  display: inline-block;
+  font-size: 12px;
+  color: var(--accent);
+  background: var(--accent-bg);
+  border: 1px solid #cdd6e2;
+  border-radius: 6px;
+  padding: 4px 10px;
+  text-decoration: none;
+}
+
+.form-links a:hover {
+  border-color: var(--accent);
+}
