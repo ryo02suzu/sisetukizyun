@@ -1,0 +1,95 @@
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { standards, getStandardById } from "../data/standards";
+import { diagnoseAll, evaluateCondition } from "../lib/engine";
+import { simulateRevenue } from "../lib/revenue";
+import type { Condition, UserInputs } from "../lib/types";
+
+test("boolean condition: met only when true", () => {
+  const c: Condition = { key: "x", label: "x", type: "boolean" };
+  assert.equal(evaluateCondition(c, { x: true }).met, true);
+  assert.equal(evaluateCondition(c, { x: false }).met, false);
+  assert.equal(evaluateCondition(c, {}).met, false);
+});
+
+test("number_min condition: met when value >= threshold", () => {
+  const c: Condition = { key: "n", label: "n", type: "number_min", number_min: 15 };
+  assert.equal(evaluateCondition(c, { n: 15 }).met, true);
+  assert.equal(evaluateCondition(c, { n: 20 }).met, true);
+  assert.equal(evaluateCondition(c, { n: 14 }).met, false);
+});
+
+test("composite_or / composite_and", () => {
+  const or: Condition = {
+    label: "or",
+    type: "composite_or",
+    sub_conditions: [
+      { key: "a", label: "a" },
+      { key: "b", label: "b" },
+    ],
+  };
+  assert.equal(evaluateCondition(or, { a: true, b: false }).met, true);
+  assert.equal(evaluateCondition(or, { a: false, b: false }).met, false);
+
+  const and: Condition = {
+    label: "and",
+    type: "composite_and",
+    sub_conditions: [
+      { key: "a", label: "a" },
+      { key: "b", label: "b" },
+    ],
+  };
+  assert.equal(evaluateCondition(and, { a: true, b: true }).met, true);
+  assert.equal(evaluateCondition(and, { a: true, b: false }).met, false);
+});
+
+test("verify flag bubbles into needsVerify when met", () => {
+  const c: Condition = { key: "x", label: "x", verify: true };
+  assert.equal(evaluateCondition(c, { x: true }).needsVerify, true);
+  assert.equal(evaluateCondition(c, { x: false }).needsVerify, false);
+});
+
+test("empty inputs -> every standard not_eligible (no false eligibility)", () => {
+  const results = diagnoseAll(standards, {});
+  for (const r of results) {
+    assert.equal(r.verdict, "not_eligible", `${r.standardId} should be not_eligible with no input`);
+  }
+});
+
+test("ha_shoshin: all conditions true -> needs_verify (has verify flags)", () => {
+  const s = getStandardById("ha_shoshin")!;
+  const inputs: UserInputs = {};
+  for (const grp of [
+    s.requirements.equipment,
+    s.requirements.staff,
+    s.requirements.system,
+    s.requirements.performance,
+    s.requirements.training,
+  ]) {
+    for (const c of grp) if (c.key) inputs[c.key] = true;
+  }
+  const result = diagnoseAll(standards, inputs).find((r) => r.standardId === "ha_shoshin")!;
+  assert.notEqual(result.verdict, "not_eligible");
+  assert.equal(result.verdict, "needs_verify"); // ha_shoshin has verify_flags
+});
+
+test("prerequisite: gai_kansen_1 blocked when ha_shoshin not eligible", () => {
+  // satisfy only gai_kansen_1's own conditions, but NOT ha_shoshin's
+  const inputs: UserInputs = {
+    has_dental_suction: true,
+    staff_config_infection: true,
+    infection_manager: true,
+    infection_control_system: true,
+  };
+  const result = diagnoseAll(standards, inputs).find((r) => r.standardId === "gai_kansen_1")!;
+  assert.equal(result.verdict, "not_eligible");
+  assert.ok(result.unmetPrerequisites.includes("ha_shoshin"));
+});
+
+test("revenue: points * count * 10yen", () => {
+  const s = getStandardById("kokan_kyo")!;
+  const res = simulateRevenue(s, { "口腔管理体制強化加算（SPT・歯管 等に加算）": 100 });
+  // 48 * 100 * 10 = 48,000
+  assert.equal(res.monthlyYenTotal, 48000);
+  assert.equal(res.yearlyYenTotal, 576000);
+});
