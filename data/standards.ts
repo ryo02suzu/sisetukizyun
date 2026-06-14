@@ -250,7 +250,7 @@ export const standards: DentalFacilityStandard[] = [
     official_name: "電子的歯科診療情報連携体制整備加算1",
     common_name: "歯医DX1",
     code_number: "1-8",
-    notification_ref: "通知 別添1-1の8 / 初診料・再診料の注（歯科の注番号は要確認）",
+    notification_ref: "通知 別添1-1の8 / 初診料（A000）注15・再診料（A002）注12",
     category: "基本診療料",
     new_or_revised_r8: "新設",
     prerequisites: [],
@@ -320,8 +320,8 @@ export const standards: DentalFacilityStandard[] = [
       formula: "(9 × 月間初診回数 + 2 × 月間再診回数) × 10円",
     },
     verify_flags: [
-      "歯科点数表における初診料・再診料の注番号（医科はA000注16/A001注19/A002注10で確定だが歯科本文は未到達）",
       "加算2（整理番号1-8-2・初診4点）は電子処方箋等の上位要件が不要",
+      "明細書発行体制等加算とは併算定不可",
     ],
     last_updated: "2026-06-14",
     source_version: "告示第70号・保医発0305第7号（歯科点数表 初診料注14/再診料注12）",
@@ -547,12 +547,38 @@ export const standards: DentalFacilityStandard[] = [
       ],
       performance: [
         {
-          key: "visit_performance_select",
-          label:
-            "歯科訪問診療の実績要件を満たす（令和8年は選択制：直近1月で訪問診療1〜3が10回以上 等のいずれか／令和6年は年18回以上）",
-          type: "boolean",
+          label: "歯科訪問診療の実績要件（令和8年・直近1か月評価の選択制）をいずれか満たす",
+          type: "composite_or",
           verify: true,
-          note: "令和8年の選択制（①直近1月で訪問1〜3を10回以上 ②訪問2〜5を5回以上(6割が20分以上) ③訪問口腔リハ5回以上 ④臨床研修施設）は二次情報。歯援診2は年4回以上または臨床研修施設。告示原本で要確認。",
+          note: "令和8年は「過去1年18回」から直近1か月評価の4ルート選択制へ変更。歯援診2は年4回以上または臨床研修施設。告示（保医発0305第8号 別添1 第14）原本で要最終照合。",
+          sub_conditions: [
+            {
+              key: "visit_1_3_monthly",
+              label: "直近1か月で歯科訪問診療1〜3を10回以上算定している",
+              type: "number_min",
+              number_min: 10,
+              unit: "回/月",
+            },
+            {
+              key: "visit_2_5_monthly",
+              label: "直近1か月で歯科訪問診療2〜5を5回以上（うち6割が20分以上）算定している",
+              type: "number_min",
+              number_min: 5,
+              unit: "回/月",
+            },
+            {
+              key: "visit_rehab_monthly",
+              label: "直近1か月で訪問歯科口腔リハビリテーションを5回以上算定している",
+              type: "number_min",
+              number_min: 5,
+              unit: "回/月",
+            },
+            {
+              key: "clinical_training_facility",
+              label: "歯科訪問診療に係る臨床研修施設である",
+              type: "boolean",
+            },
+          ],
         },
       ],
       training: [],
@@ -572,8 +598,8 @@ export const standards: DentalFacilityStandard[] = [
       formula: "100 × 月間訪問関連算定回数 × 10円",
     },
     verify_flags: [
-      "令和8年の訪問診療実績要件（選択制）の確定値は二次情報。告示原本で要確認",
-      "整理番号（歯援診1=2-92/2=2-93）は局・年度で番号体系が異なる可能性（令和6 関東信越では歯援診2=2-69の記載あり）",
+      "令和8年の訪問診療実績要件（選択制）の回数は解説一致だが告示原本（別添1 第14）で要最終照合",
+      "整理番号（歯援診1=2-92/2=2-93・東海北陸令和8で確認）は他局で要確認",
       "歯科衛生士の最低配置数の明示要件",
     ],
     last_updated: "2026-06-14",
@@ -637,8 +663,7 @@ export const standards: DentalFacilityStandard[] = [
       formula: "300 × 月間算定回数 × 10円",
     },
     verify_flags: [
-      "令和8点数（300点は二次情報で一致だが本文未到達。据え置きか改定か要確認）",
-      "整理番号2-132・様式21は厚生局一覧で要再確認",
+      "整理番号2-132・様式21は厚生局一覧で要確認（患者交付は様式21の2・21の3）",
       "令和8固有の経過措置",
     ],
     last_updated: "2026-06-14",
@@ -903,7 +928,7 @@ export const standards: DentalFacilityStandard[] = [
     official_name: "医療機器安全管理料（歯科）に係る施設基準",
     common_name: "機安歯",
     code_number: "2-86",
-    notification_ref: "医療機器安全管理料（B018）/ 保医発0305第8号",
+    notification_ref: "医療機器安全管理料（B018）/ 通知 別添1-12の2 / 保医発0305第8号",
     category: "特掲診療料",
     new_or_revised_r8: "継続",
     prerequisites: [],
@@ -931,7 +956,7 @@ export const standards: DentalFacilityStandard[] = [
       e_application_available: true,
     },
     transitional:
-      "区分B018（放射線治療計画策定に係るもの・1,100点）。歯科は医科の「1（生命維持管理装置100点）」区分を持たず1,100点のみ。様式15。",
+      "区分B018（放射線治療計画策定に係るもの・1,100点）。歯科は医科の「1（生命維持管理装置100点）」区分を持たず1,100点のみ。整理番号2-86「機安歯」・様式15（東海北陸令和8。令和6の2-068から振り直し）。",
     revenue_sim: {
       linked_items: [
         { item: "医療機器安全管理料（歯科）", points_per_event: 1100, default_monthly_count_hint: 1 },
@@ -939,8 +964,8 @@ export const standards: DentalFacilityStandard[] = [
       formula: "1100 × 月間算定回数 × 10円（一連につき）",
     },
     verify_flags: [
-      "整理番号（暫定2-86。令和6 東海北陸の様式では2-068との記載があり要再確認）",
-      "責任者の要件・令和8点数の据え置き確認",
+      "整理番号2-86は東海北陸令和8で確認。他局の令和8整理番号は要確認",
+      "令和8点数の据え置き確認",
     ],
     last_updated: "2026-06-14",
     source_version: "告示第71号（厚生局令和8 特掲一覧 2-86・様式15）",
