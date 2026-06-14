@@ -250,7 +250,7 @@ export const standards: DentalFacilityStandard[] = [
     official_name: "電子的歯科診療情報連携体制整備加算1",
     common_name: "歯医DX1",
     code_number: "1-8",
-    notification_ref: "通知 別添1-1の8 / 初診料 注14・再診料 注12",
+    notification_ref: "通知 別添1-1の8 / 初診料・再診料の注（歯科の注番号は要確認）",
     category: "基本診療料",
     new_or_revised_r8: "新設",
     prerequisites: [],
@@ -293,10 +293,8 @@ export const standards: DentalFacilityStandard[] = [
         },
         {
           key: "myna_rate_threshold",
-          label: "マイナ保険証の利用率が告示で定める割合以上である",
+          label: "マイナ保険証の利用率が30%以上である（算定月の3〜5か月前のレセプト件数のいずれかで判定）",
           type: "boolean",
-          verify: true,
-          note: "歯科の加算1/2に適用される利用率の基準値・判定時期は告示本文で要確認（二次情報では30%以上とされる）。",
         },
       ],
       performance: [],
@@ -313,7 +311,7 @@ export const standards: DentalFacilityStandard[] = [
       e_application_available: true,
     },
     transitional:
-      "令和8年新設。旧「医療DX推進体制整備加算（歯科）」を置換して新設（※旧「医療情報取得加算」は廃止されず別建てで存続）。電子カルテ情報共有サービスの活用要件は令和9年5月31日まで経過措置。施行は令和8年6月1日。",
+      "令和8年新設。旧「医療DX推進体制整備加算（歯科）」を置換して新設。旧加算からの自動移行はなく、令和8年6月1日以降の算定には改めて届出が必要（疑義解釈 別添3 問2）。電子カルテ情報共有サービスの活用要件は令和9年5月31日まで経過措置。施行は令和8年6月1日。",
     revenue_sim: {
       linked_items: [
         { item: "歯医DX1（初診）", points_per_event: 9, default_monthly_count_hint: 60 },
@@ -322,7 +320,7 @@ export const standards: DentalFacilityStandard[] = [
       formula: "(9 × 月間初診回数 + 2 × 月間再診回数) × 10円",
     },
     verify_flags: [
-      "マイナ保険証利用率の基準値・判定時期（歯科版告示で要確認）",
+      "歯科点数表における初診料・再診料の注番号（医科はA000注16/A001注19/A002注10で確定だが歯科本文は未到達）",
       "加算2（整理番号1-8-2・初診4点）は電子処方箋等の上位要件が不要",
     ],
     last_updated: "2026-06-14",
@@ -377,7 +375,7 @@ export const standards: DentalFacilityStandard[] = [
       e_application_available: false,
     },
     transitional:
-      "令和8年度改定で点数引き上げ（初診10→21点等）、（Ⅱ）の区分拡大（8→12段階）、対象職員の拡大（40歳未満の医師・歯科医師・事務職員を追加 ※二次情報）。令和8年6月1日施行に伴い再届出が必要。",
+      "令和8年度改定で点数引き上げ（初診10→21点等）、（Ⅱ）の区分拡大（8→12段階）、対象職員の拡大（40歳未満の勤務医・勤務歯科医師・事務職員を追加。40歳以上の医師・歯科医師・業務委託者・経営者・役員は除く）。賃金改善計画書の事前提出は廃止（届出簡略化）。令和8年6月1日施行に伴い再届出が必要。",
     revenue_sim: {
       linked_items: [
         { item: "ベースアップ評価料Ⅰ（初診）", points_per_event: 21, default_monthly_count_hint: 60 },
@@ -386,9 +384,7 @@ export const standards: DentalFacilityStandard[] = [
       formula: "(21 × 月間初診回数 + 4 × 月間再診回数 + 訪問分66/11点) × 10円",
     },
     verify_flags: [
-      "（Ⅰ）の令和8年点数（21/4/66/11）はMHLW概要PDF＋二次情報で一致だが告示原本で最終確認推奨",
-      "対象職員の令和8年拡大（40歳未満医師等・事務職員）は二次情報中心",
-      "（Ⅱ）は整理番号2-613・様式96、(Ⅰ)届出が前提",
+      "（Ⅱ）は整理番号2-613・様式96。（Ⅰ）の届出が前提（（Ⅰ）で得る額が賃金改善必要額の5割未満の場合に算定）",
     ],
     last_updated: "2026-06-14",
     source_version: "告示第71号・保医発0305第8号（近畿厚生局 令和8年度届出ページ）",
@@ -552,12 +548,11 @@ export const standards: DentalFacilityStandard[] = [
       performance: [
         {
           key: "visit_performance_select",
-          label: "歯科訪問診療の実績（直近の訪問診療件数等）が歯援診1の基準を満たす",
-          type: "number_min",
-          number_min: 15,
-          unit: "件",
+          label:
+            "歯科訪問診療の実績要件を満たす（令和8年は選択制：直近1月で訪問診療1〜3が10回以上 等のいずれか／令和6年は年18回以上）",
+          type: "boolean",
           verify: true,
-          note: "歯援診1の訪問診療回数の閾値は出典間で不一致（告示原本で要確認）。歯援診2はより低い閾値。",
+          note: "令和8年の選択制（①直近1月で訪問1〜3を10回以上 ②訪問2〜5を5回以上(6割が20分以上) ③訪問口腔リハ5回以上 ④臨床研修施設）は二次情報。歯援診2は年4回以上または臨床研修施設。告示原本で要確認。",
         },
       ],
       training: [],
@@ -576,7 +571,11 @@ export const standards: DentalFacilityStandard[] = [
       ],
       formula: "100 × 月間訪問関連算定回数 × 10円",
     },
-    verify_flags: ["歯科訪問診療の実績件数の閾値（歯援診1/2の区分）", "歯科衛生士の最低配置数の明示要件"],
+    verify_flags: [
+      "令和8年の訪問診療実績要件（選択制）の確定値は二次情報。告示原本で要確認",
+      "整理番号（歯援診1=2-92/2=2-93）は局・年度で番号体系が異なる可能性（令和6 関東信越では歯援診2=2-69の記載あり）",
+      "歯科衛生士の最低配置数の明示要件",
+    ],
     last_updated: "2026-06-14",
     source_version: "告示第71号・保医発0305第8号",
     sources: [
@@ -637,7 +636,11 @@ export const standards: DentalFacilityStandard[] = [
       ],
       formula: "300 × 月間算定回数 × 10円",
     },
-    verify_flags: ["令和6→8での点数変更有無（300点は確認済だが据え置きか改定かは要確認）", "令和8固有の経過措置"],
+    verify_flags: [
+      "令和8点数（300点は二次情報で一致だが本文未到達。据え置きか改定か要確認）",
+      "整理番号2-132・様式21は厚生局一覧で要再確認",
+      "令和8固有の経過措置",
+    ],
     last_updated: "2026-06-14",
     source_version: "告示第71号・保医発0305第8号（しろぼん令和8 C000 注11）",
     sources: ["https://shirobon.net/medicalfee/latest/shika/r08_shika/", KINKI_TOKUTEI, "https://www.houmonshika.org/dental/labo7/"],
@@ -669,7 +672,9 @@ export const standards: DentalFacilityStandard[] = [
     },
     fees: [
       { item_name: "光学印象", points: 150, unit: "点", frequency_note: "1歯につき（令和6:100→令和8:150点）" },
-      { item_name: "光学印象歯科技工士連携加算", points: 50, unit: "点", frequency_note: "区分・点数は令和8で要確認" },
+      { item_name: "CAD/CAMインレー（M015-3）", points: 770, unit: "点", frequency_note: "1歯につき（令和6:750→令和8:770点）" },
+      { item_name: "CAD/CAM冠（M015-2）", points: 1200, unit: "点", frequency_note: "令和8据え置き・大臼歯へ適応拡大" },
+      { item_name: "光学印象歯科技工士連携加算", points: 50, unit: "点", frequency_note: "対面のみ・単一50点（ICT区分なし）" },
     ],
     forms: {
       todokede_form: "別添2",
@@ -678,7 +683,7 @@ export const standards: DentalFacilityStandard[] = [
       e_application_available: true,
     },
     transitional:
-      "令和8年改定で光学印象の対象がCAD/CAMインレーに加えCAD/CAM冠へ拡大、CAD/CAM冠は咬合支持要件撤廃等で適応拡大。点数本体の施行は令和8年4月1日（材料告示は6月想定）。",
+      "令和8年改定で光学印象の対象がCAD/CAMインレーに加えCAD/CAM冠へ拡大、CAD/CAM冠は咬合支持要件撤廃で全大臼歯（材料Ⅲ/Ⅴ使用）・後継永久歯が先天的に欠如している乳歯へ適応拡大。施行は令和8年6月1日（薬価のみ4月1日）。",
     revenue_sim: {
       linked_items: [
         { item: "光学印象", points_per_event: 150, default_monthly_count_hint: 20 },
@@ -686,10 +691,7 @@ export const standards: DentalFacilityStandard[] = [
       ],
       formula: "(150 × 月間光学印象回数 + 50 × 連携加算回数) × 10円",
     },
-    verify_flags: [
-      "CAD/CAM冠・インレーの令和8年点数（インレー770点は1源のみ・冠点数は未確認）",
-      "光学印象歯科技工士連携加算の令和8区分・点数（50点 か 対面60/ICT80点 か 不一致）",
-    ],
+    verify_flags: ["光学印象歯科技工士連携加算の令和8点数本文（50点据え置きの公算・本文未到達）"],
     last_updated: "2026-06-14",
     source_version: "告示第69/71号（しろぼん令和8 M003-4・厚生局令和8 特掲一覧）",
     sources: [
@@ -728,8 +730,8 @@ export const standards: DentalFacilityStandard[] = [
       training: [],
     },
     fees: [
-      { item_name: "歯科技工士連携加算1（対面）", points: 60, unit: "点", frequency_note: "令和6:50→令和8:60点" },
-      { item_name: "歯科技工士連携加算2（ICT）", points: 80, unit: "点", frequency_note: "令和6:70→令和8:80点" },
+      { item_name: "歯科技工士連携加算1（対面）", points: 60, unit: "点", frequency_note: "令和6新設50→2025年4月60点" },
+      { item_name: "歯科技工士連携加算2（ICT）", points: 80, unit: "点", frequency_note: "令和6新設70→2025年4月80点" },
     ],
     forms: {
       todokede_form: "別添2",
@@ -737,7 +739,8 @@ export const standards: DentalFacilityStandard[] = [
       attachments: ["歯科技工士の配置・連携体制を示す資料"],
       e_application_available: true,
     },
-    transitional: "令和8年改定で各+10点に増点（加算1=60点、加算2=80点）。加算2はICTを用いた連携が要件。",
+    transitional:
+      "令和6年6月新設時は加算1=50点/加算2=70点。2025年4月に各+10点へ引き上げられ加算1=60点/加算2=80点（令和8年も同水準）。加算2はICTを用いた連携が要件。",
     revenue_sim: {
       linked_items: [
         { item: "歯科技工士連携加算1", points_per_event: 60, default_monthly_count_hint: 10 },
@@ -745,7 +748,7 @@ export const standards: DentalFacilityStandard[] = [
       ],
       formula: "(60 × 連携1回数 + 80 × 連携2回数(ICT)) × 10円",
     },
-    verify_flags: ["加算1の点数は1源で50点との相違あり（4源で60点が優勢）", "加算が紐づく区分番号の表記揺れ"],
+    verify_flags: ["加算が紐づく区分番号（印象採得M003・咬合採得M006等）の表記揺れ"],
     last_updated: "2026-06-14",
     source_version: "告示第69/71号（厚生局令和8 特掲一覧 2-298/2-299）",
     sources: [
@@ -790,14 +793,14 @@ export const standards: DentalFacilityStandard[] = [
       e_application_available: true,
     },
     transitional:
-      "令和8年改定で、咀嚼能力検査（D011-3）・咬合圧検査（D011-4）の施設基準が削除（届出不要化）される方向（厚生局令和8一覧に独立掲載なし／要最終確認）。検査自体は存続。",
+      "令和8年6月改定で、咀嚼能力検査（D011-2）・咬合圧検査（D011-3）・口腔細菌定量検査の施設基準（届出）が廃止（届出不要化）。検査自体は存続し、検査機器（グルコース分析装置・歯科用咬合力計）の保有は引き続き必要。",
     revenue_sim: {
       linked_items: [
         { item: "有床義歯咀嚼機能検査 等", points_per_event: 0, default_monthly_count_hint: 5 },
       ],
       formula: "検査点数 × 月間算定回数 × 10円（点数は検査区分に依存）",
     },
-    verify_flags: ["咀嚼能力検査・咬合圧検査の施設基準削除は厚生局一覧の非掲載＋解説で示唆。通知本文で最終確認", "各検査の令和8点数"],
+    verify_flags: ["有床義歯咀嚼機能検査（D011）の各区分の令和8点数"],
     last_updated: "2026-06-14",
     source_version: "告示第69/71号（厚生局令和8 特掲一覧 2-184）",
     sources: [KANTO_TOKUTEI, "https://shirobon.net/medicalfee/latest/shika/r08_shika/", KINKI_TOKUTEI],
@@ -806,7 +809,7 @@ export const standards: DentalFacilityStandard[] = [
     id: "gtr",
     official_name: "歯周組織再生誘導手術（GTR）に係る施設基準",
     common_name: "GTR",
-    code_number: "特掲（区分 J063）",
+    code_number: "2-484（区分 J063）",
     notification_ref: "J063 / 保医発0305第8号",
     category: "特掲診療料",
     new_or_revised_r8: "継続",
@@ -816,7 +819,7 @@ export const standards: DentalFacilityStandard[] = [
       staff: [
         {
           key: "dentist_perio_experience",
-          label: "歯周外科手術に係る経験を有する歯科医師を配置している",
+          label: "歯周病治療に係る5年以上の経験を有する歯科医師が1名以上配置されている",
           type: "boolean",
           verify: true,
         },
@@ -826,8 +829,8 @@ export const standards: DentalFacilityStandard[] = [
       training: [],
     },
     fees: [
-      { item_name: "歯周組織再生誘導手術 1歯（複雑なもの）", points: 840, unit: "点", frequency_note: "1歯につき（令和6値・令和8要確認）" },
-      { item_name: "歯周組織再生誘導手術 2（その他）", points: 380, unit: "点", frequency_note: "1歯につき（令和6値・令和8要確認）" },
+      { item_name: "歯周組織再生誘導手術 1次手術（膜の固定）", points: 840, unit: "点", frequency_note: "1歯につき（令和6値・令和8は据え置きの公算）" },
+      { item_name: "歯周組織再生誘導手術 2次手術（非吸収性膜の除去）", points: 380, unit: "点", frequency_note: "1歯につき（令和6値・令和8は据え置きの公算）" },
     ],
     forms: {
       todokede_form: "別添2",
@@ -835,14 +838,17 @@ export const standards: DentalFacilityStandard[] = [
       attachments: ["歯科医師の経験を証する資料"],
       e_application_available: null,
     },
-    transitional: "R6からの継続。様式74。",
+    transitional: "R6からの継続。整理番号2-484（九州厚生局）。GTR1次手術時は歯根面レーザー応用加算+60点。",
     revenue_sim: {
       linked_items: [
-        { item: "歯周組織再生誘導手術 1歯", points_per_event: 840, default_monthly_count_hint: 2 },
+        { item: "歯周組織再生誘導手術 1次手術", points_per_event: 840, default_monthly_count_hint: 2 },
       ],
-      formula: "840 × 月間1歯算定回数 × 10円",
+      formula: "840 × 月間1次手術算定回数 × 10円",
     },
-    verify_flags: ["整理番号・令和8点数・様式74の最新版（厚生局令和8 特掲一覧で要確認）", "歯科医師の経験要件"],
+    verify_flags: [
+      "令和8点数本文（令和6は1次840/2次380点。据え置きの公算だが本文未到達）",
+      "届出様式番号（暫定様式74は一次未確認）",
+    ],
     last_updated: "2026-06-14",
     source_version: "R6点数表からの継続（告示第69号・令和8値は要確認）",
     sources: [
@@ -855,7 +861,7 @@ export const standards: DentalFacilityStandard[] = [
     official_name: "口腔粘膜処置（レーザー機器加算）に係る施設基準",
     common_name: "口腔粘膜（レーザー）",
     code_number: "2-296",
-    notification_ref: "口腔粘膜処置 / レーザー機器加算 / 保医発0305第8号",
+    notification_ref: "口腔粘膜処置（I029-3）/ レーザー機器加算（J200-4-2）/ 保医発0305第8号",
     category: "特掲診療料",
     new_or_revised_r8: "継続",
     prerequisites: [],
@@ -868,21 +874,26 @@ export const standards: DentalFacilityStandard[] = [
       performance: [],
       training: [],
     },
-    fees: [{ item_name: "口腔粘膜処置（レーザー機器加算）", points: 0, unit: "点", frequency_note: "処置に加算" }],
+    fees: [{ item_name: "口腔粘膜処置（I029-3）", points: 30, unit: "点", frequency_note: "1口腔につき（令和6値）。レーザー機器加算は区分により別途" }],
     forms: {
       todokede_form: "別添2",
       attachment_forms: ["様式49の9"],
       attachments: ["レーザー機器の保有状況がわかる資料"],
       e_application_available: true,
     },
-    transitional: "R6からの継続。整理番号2-296・様式49の9（厚生局令和8 特掲一覧で確認）。",
+    transitional:
+      "R6からの継続。様式49の9（九州厚生局で確認）。口腔粘膜処置は再発性アフタ性口内炎の小アフタ型病変へのレーザー照射が対象。",
     revenue_sim: {
       linked_items: [
-        { item: "レーザー機器加算", points_per_event: 0, default_monthly_count_hint: 10 },
+        { item: "口腔粘膜処置（レーザー照射）", points_per_event: 30, default_monthly_count_hint: 10 },
       ],
-      formula: "加算点数 × 月間算定回数 × 10円",
+      formula: "30 × 月間算定回数 × 10円（レーザー機器加算は別途）",
     },
-    verify_flags: ["対象機器・対象処置の範囲", "加算点数の確定情報"],
+    verify_flags: [
+      "整理番号2-296は一次未確認",
+      "口腔粘膜処置の令和8点数（令和6は30点・据え置きの公算）",
+      "レーザー機器加算（J200-4-2）の令和8区分別点数（平成30は範囲により50/100/200点）",
+    ],
     last_updated: "2026-06-14",
     source_version: "告示第69/71号（厚生局令和8 特掲一覧 2-296）",
     sources: [KANTO_TOKUTEI, "https://kouseikyoku.mhlw.go.jp/shikoku/r6-t49-9.pdf"],
@@ -892,18 +903,18 @@ export const standards: DentalFacilityStandard[] = [
     official_name: "医療機器安全管理料（歯科）に係る施設基準",
     common_name: "機安歯",
     code_number: "2-86",
-    notification_ref: "通知 別添1-12の2 / 保医発0305第8号",
+    notification_ref: "医療機器安全管理料（B018）/ 保医発0305第8号",
     category: "特掲診療料",
     new_or_revised_r8: "継続",
     prerequisites: [],
     requirements: {
       equipment: [
-        { key: "has_radiation_device", label: "管理対象となる医療機器（歯科用X線等）を有する", type: "boolean" },
+        { key: "has_radiation_device", label: "放射線治療に係る医療機器を有する", type: "boolean" },
       ],
       staff: [
         {
           key: "staff_for_device_safety",
-          label: "医療機器の安全管理に係る責任者を配置している",
+          label: "放射線治療計画の策定に係る体制・責任者を配置している",
           type: "boolean",
           verify: true,
         },
@@ -912,21 +923,25 @@ export const standards: DentalFacilityStandard[] = [
       performance: [],
       training: [],
     },
-    fees: [{ item_name: "医療機器安全管理料（歯科）", points: 0, unit: "点", frequency_note: "区分に依存" }],
+    fees: [{ item_name: "医療機器安全管理料（歯科・B018）", points: 1100, unit: "点", frequency_note: "放射線治療計画策定に係るもの（一連につき）" }],
     forms: {
       todokede_form: "別添2",
       attachment_forms: ["様式15"],
       attachments: ["責任者の配置・機器の状況がわかる資料"],
       e_application_available: true,
     },
-    transitional: "整理番号2-86・様式15（厚生局令和8 特掲一覧で確認）。",
+    transitional:
+      "区分B018（放射線治療計画策定に係るもの・1,100点）。歯科は医科の「1（生命維持管理装置100点）」区分を持たず1,100点のみ。様式15。",
     revenue_sim: {
       linked_items: [
-        { item: "医療機器安全管理料（歯科）", points_per_event: 0, default_monthly_count_hint: 5 },
+        { item: "医療機器安全管理料（歯科）", points_per_event: 1100, default_monthly_count_hint: 1 },
       ],
-      formula: "区分点数 × 月間算定回数 × 10円",
+      formula: "1100 × 月間算定回数 × 10円（一連につき）",
     },
-    verify_flags: ["責任者の要件", "対象機器・令和8点数区分"],
+    verify_flags: [
+      "整理番号（暫定2-86。令和6 東海北陸の様式では2-068との記載があり要再確認）",
+      "責任者の要件・令和8点数の据え置き確認",
+    ],
     last_updated: "2026-06-14",
     source_version: "告示第71号（厚生局令和8 特掲一覧 2-86・様式15）",
     sources: [KANTO_TOKUTEI, KINKI_TOKUTEI],
@@ -936,7 +951,7 @@ export const standards: DentalFacilityStandard[] = [
     official_name: "歯科治療時医療管理料に係る施設基準",
     common_name: "医管",
     code_number: "2-88",
-    notification_ref: "通知 別添1-13 / 保医発0305第8号",
+    notification_ref: "歯科治療時医療管理料（B004-6-2）/ 保医発0305第8号",
     category: "特掲診療料",
     new_or_revised_r8: "継続",
     prerequisites: [],
@@ -966,21 +981,21 @@ export const standards: DentalFacilityStandard[] = [
       performance: [],
       training: [],
     },
-    fees: [{ item_name: "歯科治療時医療管理料", points: 45, unit: "点", frequency_note: "1日につき（令和6値・令和8要確認）" }],
+    fees: [{ item_name: "歯科治療時医療管理料（B004-6-2）", points: 45, unit: "点", frequency_note: "1日につき（令和8据え置き確認）" }],
     forms: {
       todokede_form: "別添2",
       attachment_forms: ["様式17"],
       attachments: ["監視機器の保有状況・連携体制がわかる資料"],
       e_application_available: true,
     },
-    transitional: "整理番号2-88・様式17（厚生局令和8 特掲一覧で確認）。",
+    transitional: "区分B004-6-2・45点（令和8据え置き）。様式17。在宅患者歯科治療時医療管理料（900/500点）は別系統。",
     revenue_sim: {
       linked_items: [
         { item: "歯科治療時医療管理料", points_per_event: 45, default_monthly_count_hint: 20 },
       ],
       formula: "45 × 月間算定回数 × 10円",
     },
-    verify_flags: ["歯科医師の経験要件", "令和8の点数（45点はR6値）"],
+    verify_flags: ["整理番号2-88は一次未確認", "歯科医師の経験要件"],
     last_updated: "2026-06-14",
     source_version: "告示第71号（厚生局令和8 特掲一覧 2-88・様式17）",
     sources: [KANTO_TOKUTEI, KINKI_TOKUTEI],
