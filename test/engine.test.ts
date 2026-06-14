@@ -88,7 +88,7 @@ test("prerequisite: gai_kansen_1 blocked when ha_shoshin not eligible", () => {
 
 test("revenue: points * count * 10yen", () => {
   const s = getStandardById("kokan_kyo")!;
-  const res = simulateRevenue(s, { "口腔管理体制強化加算（SPT・歯管 等に加算）": 100 });
+  const res = simulateRevenue(s, { "口腔管理体制強化加算（各管理料への上乗せ）": 100 });
   // 48 * 100 * 10 = 48,000
   assert.equal(res.monthlyYenTotal, 48000);
   assert.equal(res.yearlyYenTotal, 576000);
