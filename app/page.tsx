@@ -65,6 +65,14 @@ export default function Page() {
     setInputs((prev) => ({ ...prev, [key]: value }));
   }
 
+  function onBulkAnswer(keys: string[], value: boolean) {
+    setInputs((prev) => {
+      const next = { ...prev };
+      for (const k of keys) next[k] = value;
+      return next;
+    });
+  }
+
   function runDiagnosis() {
     setResults(diagnoseAll(standards, inputs));
     setStep("result");
@@ -111,7 +119,12 @@ export default function Page() {
             設備・人員・体制・実績・研修について回答すると、{standards.length}{" "}
             件の施設基準について届出可否を判定します。「要確認」タグの項目は、満たしていても届出前に厚生局確認が必要な論点です。
           </p>
-          <Questionnaire groups={groups} inputs={inputs} onChange={onChange} />
+          <Questionnaire
+            groups={groups}
+            inputs={inputs}
+            onChange={onChange}
+            onBulkAnswer={onBulkAnswer}
+          />
           <div className="actions" style={{ marginTop: 12 }}>
             <button type="button" className="btn" onClick={runDiagnosis}>
               判定する
