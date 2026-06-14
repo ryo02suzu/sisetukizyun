@@ -107,8 +107,10 @@ export interface DentalFacilityStandard {
   official_name: string;
   /** 通称・略称（例: '歯初診'）。 */
   common_name: string;
-  /** 整理番号（例: '1-16'）。 */
+  /** 整理番号（例: '1-16'）。整理番号は地方厚生局・改定年度ごとに振り直されるため確定値ではない。 */
   code_number: string;
+  /** code_number を確認した地方厚生局・年度（例: '東海北陸 令和8'）。未確認の場合は省略。 */
+  code_number_bureau?: string;
   /** 告示・通知の参照（例: '初診料 注1'）。 */
   notification_ref: string;
   category: StandardCategory;

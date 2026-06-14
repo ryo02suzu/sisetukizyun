@@ -152,6 +152,15 @@ export default function ResultCard({ result }: { result: DiagnosisResult }) {
             </div>
           </div>
 
+          <div className="detail-row">
+            <span className="detail-label">整理番号</span> {standard.code_number}
+            {standard.code_number_bureau ? `（${standard.code_number_bureau}）` : ""}
+          </div>
+
+          <div className="detail-note">
+            ※ 整理番号・届出様式は地方厚生局・改定年度ごとに異なります。届出先（管轄）の厚生局の令和8年度の届出様式一覧で必ずご確認ください。
+          </div>
+
           {standard.transitional && (
             <div className="detail-row">
               <span className="detail-label">経過措置</span> {standard.transitional}
