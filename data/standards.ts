@@ -1042,6 +1042,566 @@ export const standards: DentalFacilityStandard[] = [
     source_version: "告示第71号（厚生局令和8 特掲一覧 2-88・様式17）",
     sources: [KANTO_TOKUTEI, KINKI_TOKUTEI],
   },
+
+  // ── 令和8 追加収録（包括リサーチ報告より。診療所が届出可能なもの） ──────────
+  {
+    id: "koku_jitchi",
+    official_name: "口腔機能実地指導料に係る施設基準",
+    common_name: "口実地",
+    code_number: "2-91（B001-2-2）",
+    code_number_bureau: "近畿 令和8",
+    notification_ref: "B001-2-2 / 保医発0305第8号 別添1 第13の4の2",
+    category: "特掲診療料",
+    new_or_revised_r8: "新設",
+    prerequisites: [],
+    requirements: {
+      equipment: [],
+      staff: [
+        {
+          key: "dh_oral_function_training",
+          label:
+            "口腔機能発達不全症・口腔機能低下症の概要・検査法・訓練法・実地指導方法等（入院・在宅・施設療養患者への対応を含む）の研修を受講した歯科衛生士が1名以上配置されている",
+          type: "boolean",
+          verify: true,
+          note: "研修主催は歯科医師会・歯科衛生士会・日本老年歯科医学会・日本小児歯科学会等（疑義解釈その1 問6）。",
+        },
+      ],
+      system: [
+        { key: "oral_func_guidance_time", label: "口腔機能実地指導を実施する時間が定められている", type: "boolean" },
+        { key: "oral_func_unit", label: "指導を実施するための歯科用ユニットが確保されている", type: "boolean" },
+        {
+          key: "dh_treatment_improvement",
+          label: "当該指導を行う歯科衛生士の処遇改善に係る取組を行っている",
+          type: "boolean",
+        },
+      ],
+      performance: [],
+      training: [],
+    },
+    fees: [{ item_name: "口腔機能実地指導料", points: 46, unit: "点", frequency_note: "月1回（新設）" }],
+    forms: {
+      todokede_form: "別添2",
+      attachment_forms: ["様式17の4"],
+      attachments: ["歯科衛生士の研修受講を確認できる書類"],
+      e_application_available: true,
+    },
+    transitional:
+      "令和8年新設（旧・歯科衛生実地指導料の口腔機能指導加算12点から独立・格上げ）。研修受講要件は令和9年5月31日まで経過措置（みなし）。令和9年5月診療分までは様式17の4に受講予定の旨の記載で可（疑義解釈その1 問8）。",
+    revenue_sim: {
+      linked_items: [{ item: "口腔機能実地指導料", points_per_event: 46, default_monthly_count_hint: 30 }],
+      formula: "46 × 月間算定回数 × 10円（月1回上限）",
+    },
+    verify_flags: [
+      "整理番号2-91は局別・要確認",
+      "様式17の4 PDF URLの実在検証",
+      "研修主催団体の妥当性",
+      "在宅歯科栄養サポートチーム等連携指導料(C001-7)算定月は算定不可（併算定制限）",
+    ],
+    last_updated: "2026-06-14",
+    source_version: "告示第69号 歯科点数表（B001-2-2 46点）／保医発0305第8号",
+    sources: [
+      "https://www.mhlw.go.jp/content/10808000/001655179.pdf",
+      "https://iocil.jp/column/0694/",
+      KINKI_TOKUTEI,
+    ],
+  },
+  {
+    id: "zaikan",
+    official_name: "在宅患者歯科治療時医療管理料に係る施設基準",
+    common_name: "在歯管",
+    code_number: "2-101（C001-4-2）",
+    code_number_bureau: "近畿 令和8",
+    notification_ref: "C001-4-2 / 保医発0305第8号",
+    category: "特掲診療料",
+    new_or_revised_r8: "継続",
+    prerequisites: [],
+    requirements: {
+      equipment: [
+        {
+          key: "has_monitoring_device",
+          label: "血圧・脈拍・経皮的動脈血酸素飽和度等を経時的に監視できる機器を有する",
+          type: "boolean",
+        },
+      ],
+      staff: [
+        {
+          key: "dentist_management_zaitaku",
+          label: "十分な経験を有する常勤歯科医師・歯科衛生士等により、治療前・中・後の全身状態を管理できる体制がある",
+          type: "boolean",
+          verify: true,
+        },
+      ],
+      system: [
+        {
+          key: "emergency_hospital_link",
+          label: "緊急時に対応できる病院である別の保険医療機関との連携体制がある（医科歯科併設病院は医科診療科との連携で可）",
+          type: "boolean",
+        },
+      ],
+      performance: [],
+      training: [],
+    },
+    fees: [{ item_name: "在宅患者歯科治療時医療管理料", points: 45, unit: "点", frequency_note: "1日につき（令和6値・令和8確定値は要再確認）" }],
+    forms: {
+      todokede_form: "別添2",
+      attachment_forms: ["様式17"],
+      attachments: ["監視機器の保有状況・連携体制がわかる資料"],
+      e_application_available: true,
+    },
+    transitional: "令和8年5月31日に現に算定の機関は引き続き算定する場合 届出不要（九州厚生局 表3）。",
+    revenue_sim: {
+      linked_items: [{ item: "在宅患者歯科治療時医療管理料", points_per_event: 45, default_monthly_count_hint: 20 }],
+      formula: "45 × 月間算定回数 × 10円（1日につき）",
+    },
+    verify_flags: [
+      "点数の令和8確定値（45点は令和6値）",
+      "整理番号2-101は局別・要確認",
+      "対象患者は14疾患＋人工呼吸器・在宅酸素・感染症患者に限定。対象外算定は返戻リスク",
+      "周術期等口腔機能管理料・医科D220算定日は算定不可（併算定制限）",
+    ],
+    last_updated: "2026-06-14",
+    source_version: "告示第69号／保医発0305第8号（しろぼん C001-4-2）",
+    sources: ["https://shirobon.net/medicalfee/latest/shika/r08_shika/", KINKI_TOKUTEI],
+  },
+  {
+    id: "hokan",
+    official_name: "クラウン・ブリッジ維持管理料に係る施設基準",
+    common_name: "補管",
+    code_number: "2-580（M000-2）",
+    code_number_bureau: "近畿 令和8",
+    notification_ref: "M000-2 / 保医発0305第8号",
+    category: "特掲診療料",
+    new_or_revised_r8: "継続",
+    prerequisites: [],
+    requirements: {
+      equipment: [],
+      staff: [],
+      system: [
+        {
+          key: "hokan_todokede_unit",
+          label: "クラウン・ブリッジの維持管理を医療機関単位で行う旨を届け出ている（患者・補綴物ごとの選択は不可）",
+          type: "boolean",
+        },
+      ],
+      performance: [],
+      training: [],
+    },
+    fees: [
+      { item_name: "歯冠補綴物", points: 100, unit: "点", frequency_note: "装着日ごと（令和6値）" },
+      { item_name: "ブリッジ（5歯以下・接着Br含む）", points: 330, unit: "点", frequency_note: "令和6値" },
+      { item_name: "ブリッジ（6歯以上）", points: 440, unit: "点", frequency_note: "令和6値" },
+    ],
+    forms: {
+      todokede_form: "別添2",
+      attachment_forms: ["様式81"],
+      attachments: [],
+      e_application_available: true,
+    },
+    transitional:
+      "令和6改定でFMC・3/4冠・5/4冠・レジン前装金属冠が補管対象外に。CAD/CAM冠・チタン冠・レジン前装チタン冠・全ブリッジ・HJC等は引き続き対象。未届の場合は対象補綴物の一連費用を所定点数の70/100で算定。装着日から2年以内の同一部位再製作等は算定不可。",
+    revenue_sim: {
+      linked_items: [
+        { item: "補管（歯冠補綴物）", points_per_event: 100, default_monthly_count_hint: 30 },
+        { item: "補管（ブリッジ5歯以下）", points_per_event: 330, default_monthly_count_hint: 5 },
+      ],
+      formula: "(100 × 歯冠補綴物装着 + 330 × ブリッジ装着) × 10円",
+    },
+    verify_flags: [
+      "令和8整理番号2-580・様式81 PDF URLの最終検証（推定を含む）",
+      "点数の令和8確定値（令和6値）",
+    ],
+    last_updated: "2026-06-14",
+    source_version: "告示第69号／保医発0305第8号（しろぼん M000-2）",
+    sources: ["https://shirobon.net/medicalfee/latest/shika/r08_shika/", "https://aichi-hkn.jp/", KINKI_TOKUTEI],
+  },
+  {
+    id: "gai_kansen_2",
+    official_name: "歯科外来診療感染対策加算2",
+    common_name: "外感染2",
+    code_number: "1-21",
+    code_number_bureau: "近畿・東海北陸 令和8",
+    notification_ref: "通知 別添1-4の2 / 歯科初診料 注10・再診料 注9",
+    category: "基本診療料",
+    new_or_revised_r8: "継続",
+    prerequisites: ["ha_shoshin"],
+    requirements: {
+      equipment: [
+        {
+          key: "has_dental_suction",
+          label: "歯科用吸引装置等により、歯科ユニットごとに切削時等の飛散物質を吸収できる環境を有する",
+          type: "boolean",
+        },
+      ],
+      staff: [
+        {
+          key: "staff_config_infection",
+          label: "歯科医師が複数名、又は歯科医師1名以上＋（歯科衛生士もしくは院内感染防止対策研修受講者）1名以上配置されている",
+          type: "boolean",
+        },
+        { key: "infection_manager", label: "院内感染管理者を配置している", type: "boolean" },
+      ],
+      system: [
+        { key: "infection_control_system", label: "標準予防策に基づく院内感染管理の体制を整備している", type: "boolean" },
+        {
+          key: "shinko_kansen_taisei",
+          label: "新型インフルエンザ等感染症等の患者・疑似症患者に対する診療体制を確保している（加算2）",
+          type: "boolean",
+        },
+        {
+          key: "shinko_bcp",
+          label: "新興感染症等に係る事業継続計画（BCP）を策定している（加算2）",
+          type: "boolean",
+        },
+        {
+          key: "shinko_ika_renkei",
+          label: "新興感染症等に係る医科医療機関との連携体制がある（加算2）",
+          type: "boolean",
+        },
+        {
+          key: "shinko_ukeire",
+          label: "他の歯科医療機関から感染症患者等を受け入れる連携体制がある（加算2）",
+          type: "boolean",
+        },
+      ],
+      performance: [],
+      training: [
+        {
+          key: "shinko_kansen_kenshu",
+          label:
+            "感染経路別予防策（個人防護具の着脱法等を含む）及び新型インフルエンザ等感染症対策の研修を1年に1回以上受講した常勤歯科医師が1名以上配置されている（加算2）",
+          type: "boolean",
+          verify: true,
+        },
+      ],
+    },
+    fees: [{ item_name: "歯科外来診療感染対策加算2（初診）", points: 14, unit: "点", frequency_note: "初診時。再診時は4点（令和6値・据え置き）" }],
+    forms: {
+      todokede_form: "別添7",
+      attachment_forms: ["様式4"],
+      attachments: ["新興感染症対応体制・研修受講を示す資料"],
+      e_application_available: true,
+    },
+    transitional: "歯初診の届出が前提。加算1（外感染1）に新型インフルエンザ等感染症対応の体制・BCP・医科連携・研修を加えたもの。一般歯科診療所が届出可能（加算3・4は地域歯科診療支援病院＝病院向け）。",
+    revenue_sim: {
+      linked_items: [
+        { item: "外感染2（初診）", points_per_event: 14, default_monthly_count_hint: 60 },
+        { item: "外感染2（再診）", points_per_event: 4, default_monthly_count_hint: 400 },
+      ],
+      formula: "(14 × 月間初診回数 + 4 × 月間再診回数) × 10円",
+    },
+    verify_flags: ["令和8点数の確定（14/4点は令和6値・据え置き見込み）", "外感染1との併用不可（区分はいずれか一方）"],
+    last_updated: "2026-06-14",
+    source_version: "告示第70号・保医発0305第7号",
+    sources: [KINKI_KIHON, "https://kouseikyoku.mhlw.go.jp/kinki/r8-k04.pdf", "https://www.sedent.co.jp/pdf/kansen_02_flyer.pdf"],
+  },
+
+  // ── 病院向け（地域歯科診療支援病院・歯援病 等）。診療所では対象外だが一覧として収録 ──
+  {
+    id: "byo_shoshin",
+    official_name: "地域歯科診療支援病院歯科初診料に係る施設基準",
+    common_name: "病初診",
+    code_number: "1-17（要確認）",
+    notification_ref: "通知（地域歯科診療支援病院歯科初診料）",
+    category: "基本診療料",
+    new_or_revised_r8: "継続",
+    prerequisites: [],
+    requirements: {
+      equipment: [],
+      staff: [
+        {
+          key: "is_hospital_dental",
+          label: "病院であり、歯科外来診療部門（歯科・歯科口腔外科等）を有する",
+          type: "boolean",
+          verify: true,
+        },
+        {
+          key: "byo_dentist_config",
+          label: "歯科医師・歯科衛生士等を病院の基準に従い配置している",
+          type: "boolean",
+          verify: true,
+        },
+      ],
+      system: [
+        {
+          key: "byo_regional_role",
+          label: "地域の歯科診療所からの紹介患者・障害者・有病者等への対応や、地域歯科医療の連携・後方支援の体制を有する",
+          type: "boolean",
+          verify: true,
+        },
+        {
+          key: "infection_notice_posted",
+          label: "院内感染防止対策を実施している旨を院内掲示し、原則ウェブサイトに掲載している",
+          type: "boolean",
+        },
+      ],
+      performance: [],
+      training: [],
+    },
+    fees: [
+      { item_name: "地域歯科診療支援病院歯科初診料", points: 296, unit: "点", frequency_note: "初診時（令和8確定・r08本文）" },
+      { item_name: "地域歯科診療支援病院歯科再診料", points: 76, unit: "点", frequency_note: "再診時（令和8確定・r08本文）" },
+    ],
+    forms: {
+      todokede_form: "別添7",
+      attachment_forms: ["様式3"],
+      attachments: ["病院の体制・連携・実績がわかる資料"],
+      e_application_available: true,
+    },
+    transitional: "病院向け基準。外安全2・外感染3・外感染4の前提となる。",
+    revenue_sim: {
+      linked_items: [
+        { item: "地域歯科診療支援病院歯科初診料", points_per_event: 296, default_monthly_count_hint: 60 },
+        { item: "地域歯科診療支援病院歯科再診料", points_per_event: 76, default_monthly_count_hint: 400 },
+      ],
+      formula: "(296 × 月間初診回数 + 76 × 月間再診回数) × 10円",
+    },
+    verify_flags: [
+      "病院向け基準。詳細な施設基準要件（人員・実績・連携）は告示・通知で要確認",
+      "整理番号は局別・要確認",
+    ],
+    last_updated: "2026-06-14",
+    source_version: "告示第70号（点数はr08歯科点数表 A000/A002）",
+    sources: [SHIROBON_A000, KINKI_KIHON],
+  },
+  {
+    id: "gai_anzen_2",
+    official_name: "歯科外来診療医療安全対策加算2",
+    common_name: "外安全2",
+    code_number: "1-19",
+    code_number_bureau: "近畿・東海北陸 令和8",
+    notification_ref: "通知 別添1-4 / 歯科初診料 注10 等",
+    category: "基本診療料",
+    new_or_revised_r8: "継続",
+    prerequisites: ["byo_shoshin"],
+    requirements: {
+      equipment: [
+        { key: "has_aed", label: "自動体外式除細動器（AED）を設置している", type: "boolean" },
+        { key: "has_pulse_oximeter", label: "パルスオキシメーターを設置している", type: "boolean" },
+        { key: "has_oxygen", label: "酸素供給装置を備えている", type: "boolean" },
+        { key: "has_bp_monitor", label: "血圧計を備えている", type: "boolean" },
+        { key: "has_emergency_kit", label: "救急蘇生セット等を備えている", type: "boolean" },
+      ],
+      staff: [
+        {
+          key: "fulltime_dentist_safety_training",
+          label: "医療安全対策に係る研修を受けた常勤の歯科医師が1名以上配置されている",
+          type: "boolean",
+        },
+        {
+          key: "safety_manager_dept",
+          label: "歯科の外来診療部門に医療安全管理者を配置している（加算2は必須）",
+          type: "boolean",
+        },
+        {
+          key: "anzen2_staff",
+          label: "歯科医師複数名、又は歯科医師1名以上＋歯科衛生士もしくは看護職員1名以上を配置している",
+          type: "boolean",
+        },
+      ],
+      system: [
+        {
+          key: "emergency_link_other_clinic",
+          label: "緊急時に対応できる別の医療機関との連携体制を確保している",
+          type: "boolean",
+        },
+        {
+          key: "anzen2_incident",
+          label: "歯科外来診療で発生した医療事故・インシデント等を報告・分析し改善する体制を整備している（加算2は必須）",
+          type: "boolean",
+        },
+      ],
+      performance: [],
+      training: [],
+    },
+    fees: [{ item_name: "歯科外来診療医療安全対策加算2（初診）", points: 13, unit: "点", frequency_note: "初診時。再診時3点（令和6値・据え置き）" }],
+    forms: {
+      todokede_form: "別添7",
+      attachment_forms: ["様式4の1の2"],
+      attachments: ["AED等の設備状況・研修受講・連携体制を示す資料"],
+      e_application_available: true,
+    },
+    transitional: "地域歯科診療支援病院歯科初診料（病初診）の届出が前提。加算2は医療安全管理者の歯科外来部門配置と事故報告体制が必須。",
+    revenue_sim: {
+      linked_items: [
+        { item: "外安全2（初診）", points_per_event: 13, default_monthly_count_hint: 60 },
+        { item: "外安全2（再診）", points_per_event: 3, default_monthly_count_hint: 400 },
+      ],
+      formula: "(13 × 月間初診回数 + 3 × 月間再診回数) × 10円",
+    },
+    verify_flags: ["令和8点数の確定（13/3点は令和6値）", "病院向け（病初診が前提）"],
+    last_updated: "2026-06-14",
+    source_version: "告示第70号・保医発0305第7号",
+    sources: [KINKI_KIHON, "https://kouseikyoku.mhlw.go.jp/kinki/r8-k04-1-2.pdf"],
+  },
+  {
+    id: "gai_kansen_3",
+    official_name: "歯科外来診療感染対策加算3",
+    common_name: "外感染3",
+    code_number: "1-22",
+    code_number_bureau: "近畿・東海北陸 令和8",
+    notification_ref: "通知 別添1-4の2",
+    category: "基本診療料",
+    new_or_revised_r8: "継続",
+    prerequisites: ["byo_shoshin"],
+    requirements: {
+      equipment: [
+        {
+          key: "has_dental_suction",
+          label: "歯科用吸引装置等により、歯科ユニットごとに切削時等の飛散物質を吸収できる環境を有する",
+          type: "boolean",
+        },
+      ],
+      staff: [
+        {
+          key: "kansen3_staff",
+          label: "歯科医師複数名、又は歯科医師1名以上＋（歯科衛生士もしくは看護職員）1名以上を配置している",
+          type: "boolean",
+        },
+        { key: "infection_manager", label: "院内感染管理者を配置している（病院は歯科外来診療部門に配置）", type: "boolean" },
+      ],
+      system: [
+        { key: "infection_control_system", label: "標準予防策に基づく院内感染管理の体制を整備している", type: "boolean" },
+      ],
+      performance: [],
+      training: [],
+    },
+    fees: [{ item_name: "歯科外来診療感染対策加算3（初診）", points: 13, unit: "点", frequency_note: "初診時。再診時3点（令和6値・据え置き）" }],
+    forms: {
+      todokede_form: "別添7",
+      attachment_forms: ["様式4の1の2"],
+      attachments: ["感染対策設備・体制がわかる資料"],
+      e_application_available: true,
+    },
+    transitional: "地域歯科診療支援病院歯科初診料（病初診）の届出が前提。外感染1に相当する病院版。",
+    revenue_sim: {
+      linked_items: [
+        { item: "外感染3（初診）", points_per_event: 13, default_monthly_count_hint: 60 },
+        { item: "外感染3（再診）", points_per_event: 3, default_monthly_count_hint: 400 },
+      ],
+      formula: "(13 × 月間初診回数 + 3 × 月間再診回数) × 10円",
+    },
+    verify_flags: ["令和8点数の確定（13/3点は令和6値）", "病院向け（病初診が前提）"],
+    last_updated: "2026-06-14",
+    source_version: "告示第70号・保医発0305第7号",
+    sources: [KINKI_KIHON, "https://kouseikyoku.mhlw.go.jp/kinki/r8-k04-1-2.pdf"],
+  },
+  {
+    id: "gai_kansen_4",
+    official_name: "歯科外来診療感染対策加算4",
+    common_name: "外感染4",
+    code_number: "1-23",
+    code_number_bureau: "近畿・東海北陸 令和8",
+    notification_ref: "通知 別添1-4の2",
+    category: "基本診療料",
+    new_or_revised_r8: "継続",
+    prerequisites: ["byo_shoshin"],
+    requirements: {
+      equipment: [
+        {
+          key: "has_dental_suction",
+          label: "歯科用吸引装置等により、歯科ユニットごとに切削時等の飛散物質を吸収できる環境を有する",
+          type: "boolean",
+        },
+      ],
+      staff: [
+        {
+          key: "kansen3_staff",
+          label: "歯科医師複数名、又は歯科医師1名以上＋（歯科衛生士もしくは看護職員）1名以上を配置している",
+          type: "boolean",
+        },
+        { key: "infection_manager", label: "院内感染管理者を配置している（病院は歯科外来診療部門に配置）", type: "boolean" },
+      ],
+      system: [
+        { key: "infection_control_system", label: "標準予防策に基づく院内感染管理の体制を整備している", type: "boolean" },
+        { key: "shinko_kansen_taisei", label: "新型インフルエンザ等感染症等の患者・疑似症患者に対する診療体制を確保している", type: "boolean" },
+        { key: "shinko_bcp", label: "新興感染症等に係る事業継続計画（BCP）を策定している", type: "boolean" },
+        { key: "shinko_ika_renkei", label: "新興感染症等に係る医科医療機関との連携体制がある", type: "boolean" },
+        { key: "shinko_ukeire", label: "他の歯科医療機関から感染症患者等を受け入れる連携体制がある", type: "boolean" },
+      ],
+      performance: [],
+      training: [
+        {
+          key: "shinko_kansen_kenshu",
+          label: "感染経路別予防策及び新型インフルエンザ等感染症対策の研修を1年に1回以上受講した常勤歯科医師が1名以上配置されている",
+          type: "boolean",
+          verify: true,
+        },
+      ],
+    },
+    fees: [{ item_name: "歯科外来診療感染対策加算4（初診）", points: 15, unit: "点", frequency_note: "初診時。再診時5点（令和6値・据え置き）" }],
+    forms: {
+      todokede_form: "別添7",
+      attachment_forms: ["様式4の1の2"],
+      attachments: ["新興感染症対応体制・研修受講を示す資料"],
+      e_application_available: true,
+    },
+    transitional: "地域歯科診療支援病院歯科初診料（病初診）の届出が前提。外感染2に相当する病院版（新興感染症対応）。",
+    revenue_sim: {
+      linked_items: [
+        { item: "外感染4（初診）", points_per_event: 15, default_monthly_count_hint: 60 },
+        { item: "外感染4（再診）", points_per_event: 5, default_monthly_count_hint: 400 },
+      ],
+      formula: "(15 × 月間初診回数 + 5 × 月間再診回数) × 10円",
+    },
+    verify_flags: ["令和8点数の確定（15/5点は令和6値）", "病院向け（病初診が前提）"],
+    last_updated: "2026-06-14",
+    source_version: "告示第70号・保医発0305第7号",
+    sources: [KINKI_KIHON, "https://kouseikyoku.mhlw.go.jp/kinki/r8-k04-1-2.pdf"],
+  },
+  {
+    id: "shien_byo",
+    official_name: "在宅療養支援歯科病院に係る施設基準",
+    common_name: "歯援病",
+    code_number: "2-94",
+    code_number_bureau: "近畿 令和8（要確認）",
+    notification_ref: "通知 別添1-14 系",
+    category: "特掲診療料",
+    new_or_revised_r8: "継続",
+    prerequisites: ["byo_shoshin"],
+    requirements: {
+      equipment: [
+        {
+          key: "has_portable_equipment",
+          label: "歯科訪問診療に必要な可搬式機器（ポータブルユニット・吸引・レントゲン等）を有する",
+          type: "boolean",
+        },
+      ],
+      staff: [
+        {
+          key: "dentist_home_training",
+          label: "高齢者の心身の特性・口腔機能管理・緊急時対応等の研修を受講した歯科医師を配置している",
+          type: "boolean",
+          verify: true,
+        },
+        { key: "dental_hygienist_home", label: "歯科衛生士を配置している", type: "boolean" },
+      ],
+      system: [
+        {
+          key: "medical_link",
+          label: "医科・介護・地域包括ケアとの連携体制を有する",
+          type: "boolean",
+        },
+      ],
+      performance: [],
+      training: [],
+    },
+    fees: [{ item_name: "在宅療養支援歯科病院加算（各種加算の前提）", points: 100, unit: "点", frequency_note: "関連加算に反映" }],
+    forms: {
+      todokede_form: "別添2",
+      attachment_forms: ["様式18"],
+      attachments: ["訪問診療実績・連携先一覧・研修受講を示す資料"],
+      e_application_available: true,
+    },
+    transitional: "在宅療養支援歯科診療所（歯援診）の病院版。様式18（在宅療養支援歯科診療所1・2又は在宅療養支援歯科病院 共通）。",
+    revenue_sim: {
+      linked_items: [{ item: "在宅療養支援歯科病院加算", points_per_event: 100, default_monthly_count_hint: 20 }],
+      formula: "100 × 月間訪問関連算定回数 × 10円",
+    },
+    verify_flags: ["整理番号2-94は局別・要確認", "病院向け基準。実績・連携要件は告示で要確認"],
+    last_updated: "2026-06-14",
+    source_version: "告示第71号・保医発0305第8号",
+    sources: [KINKI_TOKUTEI, "https://kouseikyoku.mhlw.go.jp/kinki/r6-t18.pdf"],
+  },
 ];
 
 /** id で施設基準を引く。 */
@@ -1190,6 +1750,78 @@ export const officialForms: Record<string, OfficialForms> = {
     forms: [
       { label: "別添2（医管）", url: KINKI_PDF + "r8-2-088.pdf" },
       { label: "様式17", url: KINKI_PDF + "r8-t17.pdf" },
+    ],
+  },
+  koku_jitchi: {
+    bureau: "近畿 令和8",
+    common: { label: "共通届出書 別添2", url: BESSHI2 },
+    forms: [
+      { label: "別添2（口実地）", url: KINKI_PDF + "r8-2-091.pdf" },
+      { label: "様式17の4 ※推定・要検証", url: KINKI_PDF + "r8-t17-4.pdf" },
+    ],
+  },
+  zaikan: {
+    bureau: "近畿 令和8",
+    common: { label: "共通届出書 別添2", url: BESSHI2 },
+    forms: [
+      { label: "別添2（在歯管）", url: KINKI_PDF + "r8-2-101.pdf" },
+      { label: "様式17", url: KINKI_PDF + "r8-t17.pdf" },
+    ],
+  },
+  hokan: {
+    bureau: "近畿 令和8",
+    common: { label: "共通届出書 別添2", url: BESSHI2 },
+    forms: [
+      { label: "別添2（補管）", url: KINKI_PDF + "r8-2-580.pdf" },
+      { label: "様式81 ※推定・要検証", url: KINKI_PDF + "r8-t81.pdf" },
+    ],
+  },
+  gai_kansen_2: {
+    bureau: "近畿 令和8",
+    common: { label: "共通届出書 別添7", url: BESSHI7 },
+    forms: [
+      { label: "別添7（外感染2）", url: KINKI_PDF + "r8-1-021.pdf" },
+      { label: "様式4", url: KINKI_PDF + "r8-k04.pdf" },
+    ],
+  },
+  byo_shoshin: {
+    bureau: "近畿 令和8",
+    common: { label: "共通届出書 別添7", url: BESSHI7 },
+    forms: [
+      { label: "別添7（病初診）※推定・要検証", url: KINKI_PDF + "r8-1-017.pdf" },
+      { label: "様式3", url: KINKI_PDF + "r8-k03.pdf" },
+    ],
+  },
+  gai_anzen_2: {
+    bureau: "近畿 令和8",
+    common: { label: "共通届出書 別添7", url: BESSHI7 },
+    forms: [
+      { label: "別添7（外安全2）", url: KINKI_PDF + "r8-1-019.pdf" },
+      { label: "様式4の1の2", url: KINKI_PDF + "r8-k04-1-2.pdf" },
+    ],
+  },
+  gai_kansen_3: {
+    bureau: "近畿 令和8",
+    common: { label: "共通届出書 別添7", url: BESSHI7 },
+    forms: [
+      { label: "別添7（外感染3）", url: KINKI_PDF + "r8-1-022.pdf" },
+      { label: "様式4の1の2", url: KINKI_PDF + "r8-k04-1-2.pdf" },
+    ],
+  },
+  gai_kansen_4: {
+    bureau: "近畿 令和8",
+    common: { label: "共通届出書 別添7", url: BESSHI7 },
+    forms: [
+      { label: "別添7（外感染4）", url: KINKI_PDF + "r8-1-023.pdf" },
+      { label: "様式4の1の2", url: KINKI_PDF + "r8-k04-1-2.pdf" },
+    ],
+  },
+  shien_byo: {
+    bureau: "近畿 令和8",
+    common: { label: "共通届出書 別添2", url: BESSHI2 },
+    forms: [
+      { label: "別添2（歯援病）※推定・要検証", url: KINKI_PDF + "r8-2-094.pdf" },
+      { label: "様式18", url: KINKI_PDF + "r8-t18.pdf" },
     ],
   },
 };
