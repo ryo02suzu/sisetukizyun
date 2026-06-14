@@ -10,6 +10,10 @@ interface Props {
 }
 
 export default function RevenueSim({ standards }: Props) {
+  // 試算に含める基準（既定は全件）。
+  const [included, setIncluded] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(standards.map((s) => [s.id, true])),
+  );
   // item 名 → 月間回数。初期値は default_monthly_count_hint。
   const [counts, setCounts] = useState<Record<string, number>>(() => {
     const init: Record<string, number> = {};
@@ -21,12 +25,17 @@ export default function RevenueSim({ standards }: Props) {
     return init;
   });
 
+  const activeStandards = useMemo(
+    () => standards.filter((s) => included[s.id]),
+    [standards, included],
+  );
+
   const result = useMemo(
     () =>
       simulateRevenueForMany(
-        standards.map((s) => ({ standard: s, monthlyCounts: counts })),
+        activeStandards.map((s) => ({ standard: s, monthlyCounts: counts })),
       ),
-    [standards, counts],
+    [activeStandards, counts],
   );
 
   if (standards.length === 0) {
@@ -41,8 +50,24 @@ export default function RevenueSim({ standards }: Props) {
     <>
       <p className="sub">
         各項目の<strong>月間算定回数</strong>を入力すると、1点=10円で月額・年額を試算します（点数 ×
-        回数 × 10円の単純合算）。
+        回数 × 10円の単純合算）。試算に含める基準はチェックで選べます。
       </p>
+
+      <div className="include-grid no-print">
+        {standards.map((s) => (
+          <label key={s.id} className="include-item">
+            <input
+              type="checkbox"
+              checked={included[s.id] ?? false}
+              onChange={(e) =>
+                setIncluded((prev) => ({ ...prev, [s.id]: e.target.checked }))
+              }
+            />
+            {s.common_name}
+          </label>
+        ))}
+      </div>
+
       <table className="rev-table">
         <thead>
           <tr>
@@ -76,6 +101,13 @@ export default function RevenueSim({ standards }: Props) {
               <td>{formatYen(line.yearlyYen)}</td>
             </tr>
           ))}
+          {result.lines.length === 0 && (
+            <tr>
+              <td colSpan={5} style={{ textAlign: "center", color: "var(--muted)" }}>
+                試算に含める基準を選択してください。
+              </td>
+            </tr>
+          )}
         </tbody>
         <tfoot>
           <tr>

@@ -484,3 +484,230 @@ input[type="number"] {
   padding: 10px 12px;
   margin-top: 16px;
 }
+
+/* ── steps as buttons ── */
+.step {
+  border: 1px solid var(--border);
+  cursor: pointer;
+  font-family: inherit;
+}
+.step:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+/* ── ghost button ── */
+.btn.ghost {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+}
+.btn.ghost:hover {
+  color: var(--text);
+  border-color: var(--muted);
+}
+
+/* ── new / revised tag ── */
+.tag-new {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--accent);
+  border-radius: 4px;
+  padding: 1px 7px;
+  vertical-align: middle;
+}
+
+/* ── result card verdict accent ── */
+.result-card.v-eligible {
+  border-left: 4px solid var(--ok);
+}
+.result-card.v-needs_verify {
+  border-left: 4px solid var(--warn);
+}
+.result-card.v-not_eligible {
+  border-left: 4px solid var(--ng);
+}
+
+.card-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+/* ── detail box ── */
+.detail-box {
+  margin-top: 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 13px;
+}
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.detail-label {
+  font-weight: 700;
+  color: var(--muted);
+  font-size: 12px;
+}
+.detail-list {
+  margin: 4px 0 0;
+  padding-left: 16px;
+}
+.detail-list li {
+  margin-bottom: 2px;
+}
+.detail-row {
+  margin-top: 10px;
+  line-height: 1.7;
+}
+.detail-row .detail-label {
+  display: inline-block;
+  margin-right: 6px;
+}
+.src-links a {
+  color: var(--accent);
+  margin-right: 6px;
+  text-decoration: none;
+}
+
+/* ── revenue: include selector ── */
+.include-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin: 4px 0 14px;
+  padding: 12px;
+  background: var(--bg);
+  border-radius: 8px;
+}
+.include-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* ── clickable summary stats (filter) ── */
+.stat.clickable {
+  cursor: pointer;
+  text-align: center;
+  font-family: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.stat.clickable:hover {
+  border-color: var(--accent);
+}
+.stat.clickable.sel {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-bg);
+}
+.filter-note {
+  font-size: 13px;
+  color: var(--muted);
+  margin: -4px 0 12px;
+}
+
+/* ── footer / print title ── */
+.app-footer {
+  margin-top: 28px;
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.7;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+.print-title {
+  display: none;
+}
+
+/* ── responsive (mobile) ── */
+@media (max-width: 640px) {
+  body {
+    font-size: 14px;
+  }
+  .container {
+    padding: 16px 12px 64px;
+  }
+  .steps {
+    gap: 6px;
+  }
+  .step {
+    min-width: 0;
+    padding: 7px 6px;
+    font-size: 12px;
+  }
+  .summary-bar .stat {
+    padding: 8px 10px;
+  }
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+  .q-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+  }
+  .toggle {
+    align-self: flex-start;
+  }
+  .rev-table {
+    font-size: 12px;
+  }
+  .rev-table input[type="number"] {
+    width: 64px;
+  }
+  .actions .btn {
+    flex: 1 1 auto;
+  }
+}
+
+/* ── print ── */
+@media print {
+  :root {
+    --bg: #fff;
+  }
+  body {
+    background: #fff;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .container {
+    max-width: 100%;
+    padding: 0;
+  }
+  .print-title {
+    display: block;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .panel {
+    border: 0;
+    padding: 0;
+    margin-bottom: 12px;
+    break-inside: avoid;
+  }
+  .result-card {
+    break-inside: avoid;
+    border: 1px solid #ccc;
+  }
+  .summary-bar .stat {
+    border: 1px solid #ccc;
+  }
+  .badge {
+    border: 1px solid currentColor;
+  }
+  a[href]::after {
+    content: "";
+  }
+}

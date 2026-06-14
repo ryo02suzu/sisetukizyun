@@ -93,3 +93,56 @@ test("revenue: points * count * 10yen", () => {
   assert.equal(res.monthlyYenTotal, 48000);
   assert.equal(res.yearlyYenTotal, 576000);
 });
+
+test("threshold type behaves like number_min", () => {
+  const c: Condition = { key: "t", label: "t", type: "threshold", threshold: 30 };
+  assert.equal(evaluateCondition(c, { t: 30 }).met, true);
+  assert.equal(evaluateCondition(c, { t: 29 }).met, false);
+});
+
+test("nested composite_and inside composite_or", () => {
+  const c: Condition = {
+    label: "root",
+    type: "composite_or",
+    sub_conditions: [
+      {
+        label: "and",
+        type: "composite_and",
+        sub_conditions: [
+          { key: "a", label: "a" },
+          { key: "b", label: "b" },
+        ],
+      },
+      { key: "c", label: "c" },
+    ],
+  };
+  assert.equal(evaluateCondition(c, { a: true, b: true }).met, true); // and-branch met
+  assert.equal(evaluateCondition(c, { a: true, b: false, c: true }).met, true); // c met
+  assert.equal(evaluateCondition(c, { a: true, b: false, c: false }).met, false);
+});
+
+test("every standard has unique id and at least one fee", () => {
+  const ids = new Set<string>();
+  for (const s of standards) {
+    assert.ok(!ids.has(s.id), `duplicate id ${s.id}`);
+    ids.add(s.id);
+    assert.ok(s.fees.length >= 1, `${s.id} has no fees`);
+    assert.ok(s.sources.length >= 1, `${s.id} has no sources`);
+  }
+});
+
+test("all prerequisite ids resolve to an existing standard", () => {
+  const ids = new Set(standards.map((s) => s.id));
+  for (const s of standards) {
+    for (const p of s.prerequisites) {
+      assert.ok(ids.has(p), `${s.id} references unknown prerequisite ${p}`);
+    }
+  }
+});
+
+test("revenue: multiple standards aggregate", () => {
+  const s1 = getStandardById("kokan_kyo")!;
+  const res = simulateRevenue(s1, {});
+  // default hint 120 * 48 * 10 = 57,600
+  assert.equal(res.monthlyYenTotal, 57600);
+});

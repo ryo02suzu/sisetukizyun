@@ -13,6 +13,7 @@ const VERDICT_LABEL: Record<DiagnosisResult["verdict"], string> = {
 export default function ResultCard({ result }: { result: DiagnosisResult }) {
   const [explain, setExplain] = useState<{ text: string; source: string } | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showDetail, setShowDetail] = useState(false);
   const standard = getStandardById(result.standardId);
 
   async function fetchExplanation() {
@@ -39,10 +40,11 @@ export default function ResultCard({ result }: { result: DiagnosisResult }) {
   }
 
   return (
-    <div className="result-card">
+    <div className={`result-card v-${result.verdict}`}>
       <div className="result-head">
         <div className="result-title">
           {result.common_name}
+          {standard?.new_or_revised_r8 === "新設" && <span className="tag-new">令和8新設</span>}
           <span className="code">
             {result.official_name}
             {standard ? `／整理番号 ${standard.code_number}` : ""}
@@ -85,7 +87,7 @@ export default function ResultCard({ result }: { result: DiagnosisResult }) {
         </div>
       )}
 
-      <div style={{ marginTop: 10 }}>
+      <div className="card-actions no-print">
         <button
           type="button"
           className="btn secondary small"
@@ -94,6 +96,16 @@ export default function ResultCard({ result }: { result: DiagnosisResult }) {
         >
           {loading ? "生成中…" : "解説を表示"}
         </button>
+        {standard && (
+          <button
+            type="button"
+            className="btn ghost small"
+            onClick={() => setShowDetail((v) => !v)}
+            aria-expanded={showDetail}
+          >
+            {showDetail ? "詳細を閉じる" : "点数・様式・出典を見る"}
+          </button>
+        )}
       </div>
 
       {explain && (
@@ -104,6 +116,62 @@ export default function ResultCard({ result }: { result: DiagnosisResult }) {
               ? "※ AI（Claude）が判定結果を言い換えた解説です。判定自体はルールエンジンによる確定的なものです。"
               : "※ ルールベースの解説です（AI解説は ANTHROPIC_API_KEY 設定時に有効）。"}
           </span>
+        </div>
+      )}
+
+      {showDetail && standard && (
+        <div className="detail-box">
+          <div className="detail-grid">
+            <div>
+              <div className="detail-label">算定できる点数</div>
+              <ul className="detail-list">
+                {standard.fees.map((f, i) => (
+                  <li key={i}>
+                    {f.item_name}：<strong>{f.points}点</strong>
+                    {f.frequency_note ? `（${f.frequency_note}）` : ""}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <div className="detail-label">届出様式</div>
+              <ul className="detail-list">
+                <li>届出書：{standard.forms.todokede_form}</li>
+                {standard.forms.attachment_forms.length > 0 && (
+                  <li>添付様式：{standard.forms.attachment_forms.join("、")}</li>
+                )}
+                <li>
+                  電子申請：
+                  {standard.forms.e_application_available === true
+                    ? "対応"
+                    : standard.forms.e_application_available === false
+                      ? "非対応"
+                      : "要確認"}
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {standard.transitional && (
+            <div className="detail-row">
+              <span className="detail-label">経過措置</span> {standard.transitional}
+            </div>
+          )}
+
+          <div className="detail-row">
+            <span className="detail-label">根拠</span> {standard.source_version}
+          </div>
+
+          <div className="detail-row no-print">
+            <span className="detail-label">出典</span>
+            <span className="src-links">
+              {standard.sources.map((url, i) => (
+                <a key={i} href={url} target="_blank" rel="noopener noreferrer">
+                  [{i + 1}]
+                </a>
+              ))}
+            </span>
+          </div>
         </div>
       )}
     </div>

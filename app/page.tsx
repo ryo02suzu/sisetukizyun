@@ -1,14 +1,17 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { standards, getStandardById } from "@/data/standards";
 import { diagnoseAll } from "@/lib/engine";
-import type { Condition, DiagnosisResult, UserInputs } from "@/lib/types";
+import type { Condition, DiagnosisResult, UserInputs, Verdict } from "@/lib/types";
 import Questionnaire, { type QuestionGroup } from "@/components/Questionnaire";
 import ResultCard from "@/components/ResultCard";
 import RevenueSim from "@/components/RevenueSim";
 
 type Step = "input" | "result" | "revenue";
+type ResultFilter = "all" | Verdict;
+
+const STORAGE_KEY = "dental-facility-inputs-v1";
 
 // 全基準から、要件カテゴリ別に一意な設問を収集する。
 function buildQuestionGroups(): QuestionGroup[] {
@@ -54,12 +57,42 @@ function buildQuestionGroups(): QuestionGroup[] {
 
 const CAT = { equipment: 0, staff: 0, system: 0, performance: 0, training: 0 };
 
+const FILTER_LABEL: Record<ResultFilter, string> = {
+  all: "すべて",
+  eligible: "届出可能",
+  needs_verify: "要確認",
+  not_eligible: "届出不可",
+};
+
 export default function Page() {
   const [step, setStep] = useState<Step>("input");
   const [inputs, setInputs] = useState<UserInputs>({});
   const [results, setResults] = useState<DiagnosisResult[] | null>(null);
+  const [filter, setFilter] = useState<ResultFilter>("all");
+  const [hydrated, setHydrated] = useState(false);
 
   const groups = useMemo(() => buildQuestionGroups(), []);
+
+  // 起動時に前回の回答を復元。
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) setInputs(JSON.parse(raw) as UserInputs);
+    } catch {
+      /* ignore */
+    }
+    setHydrated(true);
+  }, []);
+
+  // 回答を保存。
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(inputs));
+    } catch {
+      /* ignore */
+    }
+  }, [inputs, hydrated]);
 
   function onChange(key: string, value: boolean | number) {
     setInputs((prev) => ({ ...prev, [key]: value }));
@@ -73,9 +106,15 @@ export default function Page() {
     });
   }
 
+  function resetInputs() {
+    if (typeof window !== "undefined" && !window.confirm("回答をすべてリセットしますか？")) return;
+    setInputs({});
+  }
+
   function runDiagnosis() {
     setResults(diagnoseAll(standards, inputs));
     setStep("result");
+    setFilter("all");
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -96,20 +135,44 @@ export default function Page() {
     };
   }, [results]);
 
-  const basic = results?.filter((r) => r.category === "基本診療料") ?? [];
-  const tokutei = results?.filter((r) => r.category === "特掲診療料") ?? [];
+  const visible = useMemo(
+    () => (results ?? []).filter((r) => filter === "all" || r.verdict === filter),
+    [results, filter],
+  );
+  const basic = visible.filter((r) => r.category === "基本診療料");
+  const tokutei = visible.filter((r) => r.category === "特掲診療料");
 
   return (
     <div className="container">
-      <header className="app">
+      <header className="app no-print">
         <h1>歯科 施設基準 届出可否 診断</h1>
         <p>令和8年度（2026年6月施行）改定対応 ／ 届出可否の判定・収益試算</p>
       </header>
 
-      <div className="steps">
-        <div className={`step ${step === "input" ? "active" : ""}`}>1. 問診</div>
-        <div className={`step ${step === "result" ? "active" : ""}`}>2. 判定結果</div>
-        <div className={`step ${step === "revenue" ? "active" : ""}`}>3. 収益試算</div>
+      <div className="steps no-print">
+        <button
+          type="button"
+          className={`step ${step === "input" ? "active" : ""}`}
+          onClick={() => setStep("input")}
+        >
+          1. 問診
+        </button>
+        <button
+          type="button"
+          className={`step ${step === "result" ? "active" : ""}`}
+          onClick={() => results && setStep("result")}
+          disabled={!results}
+        >
+          2. 判定結果
+        </button>
+        <button
+          type="button"
+          className={`step ${step === "revenue" ? "active" : ""}`}
+          onClick={() => results && setStep("revenue")}
+          disabled={!results}
+        >
+          3. 収益試算
+        </button>
       </div>
 
       {step === "input" && (
@@ -117,7 +180,7 @@ export default function Page() {
           <h2>診療所の状況を入力してください</h2>
           <p className="sub">
             設備・人員・体制・実績・研修について回答すると、{standards.length}{" "}
-            件の施設基準について届出可否を判定します。「要確認」タグの項目は、満たしていても届出前に厚生局確認が必要な論点です。
+            件の施設基準について届出可否を判定します。「要確認」タグの項目は、満たしていても届出前に厚生局確認が必要な論点です。回答はこの端末に自動保存されます。
           </p>
           <Questionnaire
             groups={groups}
@@ -125,9 +188,12 @@ export default function Page() {
             onChange={onChange}
             onBulkAnswer={onBulkAnswer}
           />
-          <div className="actions" style={{ marginTop: 12 }}>
+          <div className="actions" style={{ marginTop: 16 }}>
             <button type="button" className="btn" onClick={runDiagnosis}>
               判定する
+            </button>
+            <button type="button" className="btn ghost" onClick={resetInputs}>
+              回答をリセット
             </button>
           </div>
         </div>
@@ -135,49 +201,87 @@ export default function Page() {
 
       {step === "result" && results && (
         <>
+          <div className="print-title">
+            歯科 施設基準 届出可否 診断結果（令和8年度改定対応）
+          </div>
+
           <div className="summary-bar">
-            <div className="stat">
+            <button
+              type="button"
+              className={`stat clickable ${filter === "eligible" ? "sel" : ""}`}
+              onClick={() => setFilter(filter === "eligible" ? "all" : "eligible")}
+            >
               <div className="n" style={{ color: "var(--ok)" }}>
                 {counts.eligible}
               </div>
               <div className="l">届出可能</div>
-            </div>
-            <div className="stat">
+            </button>
+            <button
+              type="button"
+              className={`stat clickable ${filter === "needs_verify" ? "sel" : ""}`}
+              onClick={() => setFilter(filter === "needs_verify" ? "all" : "needs_verify")}
+            >
               <div className="n" style={{ color: "var(--warn)" }}>
                 {counts.verify}
               </div>
               <div className="l">要確認</div>
-            </div>
-            <div className="stat">
+            </button>
+            <button
+              type="button"
+              className={`stat clickable ${filter === "not_eligible" ? "sel" : ""}`}
+              onClick={() => setFilter(filter === "not_eligible" ? "all" : "not_eligible")}
+            >
               <div className="n" style={{ color: "var(--ng)" }}>
                 {counts.ng}
               </div>
               <div className="l">届出不可</div>
+            </button>
+          </div>
+
+          {filter !== "all" && (
+            <p className="filter-note no-print">
+              「{FILTER_LABEL[filter]}」で絞り込み中。
+              <button type="button" className="link-btn" onClick={() => setFilter("all")}>
+                解除
+              </button>
+            </p>
+          )}
+
+          {basic.length > 0 && (
+            <div className="panel">
+              <h2>基本診療料系</h2>
+              <p className="sub">院内感染防止対策・外来診療体制・医療DX・ベースアップ評価料 等</p>
+              {basic.map((r) => (
+                <ResultCard key={r.standardId} result={r} />
+              ))}
             </div>
-          </div>
+          )}
 
-          <div className="panel">
-            <h2>基本診療料系</h2>
-            <p className="sub">院内感染防止対策・外来診療体制・医療DX・ベースアップ評価料 等</p>
-            {basic.map((r) => (
-              <ResultCard key={r.standardId} result={r} />
-            ))}
-          </div>
+          {tokutei.length > 0 && (
+            <div className="panel">
+              <h2>特掲診療料系</h2>
+              <p className="sub">口腔管理体制強化・在宅療養支援・CAD/CAM・検査・手術 等</p>
+              {tokutei.map((r) => (
+                <ResultCard key={r.standardId} result={r} />
+              ))}
+            </div>
+          )}
 
-          <div className="panel">
-            <h2>特掲診療料系</h2>
-            <p className="sub">口腔管理体制強化・在宅療養支援・CAD/CAM・検査・手術 等</p>
-            {tokutei.map((r) => (
-              <ResultCard key={r.standardId} result={r} />
-            ))}
-          </div>
+          {visible.length === 0 && (
+            <div className="panel">
+              <p className="sub">該当する施設基準はありません。</p>
+            </div>
+          )}
 
-          <div className="actions">
+          <div className="actions no-print">
             <button type="button" className="btn secondary" onClick={() => setStep("input")}>
               ← 問診に戻る
             </button>
             <button type="button" className="btn" onClick={() => setStep("revenue")}>
               収益試算へ →
+            </button>
+            <button type="button" className="btn ghost" onClick={() => window.print()}>
+              チェックリストを印刷 / PDF
             </button>
           </div>
 
@@ -193,9 +297,12 @@ export default function Page() {
             <h2>収益試算</h2>
             <RevenueSim standards={eligibleStandards} />
           </div>
-          <div className="actions">
+          <div className="actions no-print">
             <button type="button" className="btn secondary" onClick={() => setStep("result")}>
               ← 判定結果に戻る
+            </button>
+            <button type="button" className="btn ghost" onClick={() => window.print()}>
+              試算を印刷 / PDF
             </button>
           </div>
           <div className="disclaimer">
@@ -203,6 +310,11 @@ export default function Page() {
           </div>
         </>
       )}
+
+      <footer className="app-footer no-print">
+        データ更新日 2026-06-14 ／ 出典：厚労省告示第69〜71号・通知 保医発0305第6〜8号・各地方厚生局
+        届出様式。本ツールは届出可否の目安を示すもので、最終判断は厚生局の確認によります。
+      </footer>
     </div>
   );
 }
