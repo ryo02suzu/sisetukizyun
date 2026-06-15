@@ -79,15 +79,20 @@ export default function RevenueSim({ standards }: Props) {
           </tr>
         </thead>
         <tbody>
-          {result.lines.map((line) => (
-            <tr key={line.item}>
-              <td>{line.item}</td>
+          {result.lines.map((line, i) => (
+            <tr key={line.item + i} className={line.excluded ? "rev-excluded" : ""}>
+              <td>
+                {line.item}
+                {line.oncePerMonth && <span className="cap-badge">月1回/患者</span>}
+                {line.excluded && <span className="excluded-badge">併算定不可で除外</span>}
+              </td>
               <td>{line.pointsPerEvent}点</td>
               <td>
                 <input
                   type="number"
                   min={0}
                   value={counts[line.item] ?? 0}
+                  disabled={line.excluded}
                   onChange={(e) =>
                     setCounts((prev) => ({
                       ...prev,
@@ -119,6 +124,16 @@ export default function RevenueSim({ standards }: Props) {
           </tr>
         </tfoot>
       </table>
+
+      {result.excludedStandards.length > 0 && (
+        <p className="rev-note">
+          ※ 同月に併算定しない区分（{result.excludedStandards.join("・")}
+          ）は、収益最大の基準のみを合計に計上し、他は除外しています。
+        </p>
+      )}
+      <p className="rev-note">
+        ※ これは「点数 × 月間延べ算定回数 × 10円」の<strong>粗い上限の目安</strong>です。月内回数制限・併算定不可・包括化（まるめ）・査定は完全には反映していません。実際の収益は患者構成等により下振れします。
+      </p>
     </>
   );
 }

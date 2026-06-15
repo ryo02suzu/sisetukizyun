@@ -743,3 +743,53 @@ input[type="number"] {
 .form-links a:hover {
   border-color: var(--accent);
 }
+
+/* ── 収益試算の精緻化表示 ── */
+.rev-table tr.rev-excluded {
+  color: var(--muted);
+  background: var(--bg);
+}
+.rev-table tr.rev-excluded input {
+  opacity: 0.5;
+}
+.cap-badge {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 11px;
+  color: var(--accent);
+  background: var(--accent-bg);
+  border-radius: 4px;
+  padding: 0 6px;
+}
+.excluded-badge {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 11px;
+  color: var(--ng);
+  background: var(--ng-bg);
+  border-radius: 4px;
+  padding: 0 6px;
+}
+.rev-note {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 8px 0 0;
+}
+
+/* ── 経過措置カウントダウン ── */
+.deadline-badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--warn);
+  background: var(--warn-bg);
+  border: 1px solid #f0e0b0;
+  border-radius: 999px;
+  padding: 1px 10px;
+  margin-right: 6px;
+}
+.deadline-badge.past {
+  color: var(--muted);
+  background: var(--bg);
+  border-color: var(--border);
+}

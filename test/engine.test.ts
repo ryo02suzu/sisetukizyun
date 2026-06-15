@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { standards, getStandardById } from "../data/standards";
 import { diagnoseAll, evaluateCondition } from "../lib/engine";
-import { simulateRevenue } from "../lib/revenue";
+import { simulateRevenue, simulateRevenueForMany } from "../lib/revenue";
 import type { Condition, UserInputs } from "../lib/types";
 
 test("boolean condition: met only when true", () => {
@@ -145,4 +145,43 @@ test("revenue: multiple standards aggregate", () => {
   const res = simulateRevenue(s1, {});
   // default hint 120 * 48 * 10 = 57,600
   assert.equal(res.monthlyYenTotal, 57600);
+});
+
+test("revenue exclusive_group keeps only the highest-yield standard", () => {
+  const k1 = getStandardById("gai_kansen_1")!; // 外感染1: 12/2
+  const k2 = getStandardById("gai_kansen_2")!; // 外感染2: 14/4 (higher)
+  const res = simulateRevenueForMany([
+    { standard: k1, monthlyCounts: {} },
+    { standard: k2, monthlyCounts: {} },
+  ]);
+  assert.ok(res.excludedStandards.includes("外感染1"), "外感染1 should be excluded");
+  const onlyK2 = simulateRevenue(k2, {}).monthlyYenTotal;
+  assert.equal(res.monthlyYenTotal, onlyK2);
+});
+
+test("revenue without exclusive collision sums both", () => {
+  const a = getStandardById("kokan_kyo")!;
+  const b = getStandardById("gtr")!;
+  const res = simulateRevenueForMany([
+    { standard: a, monthlyCounts: {} },
+    { standard: b, monthlyCounts: {} },
+  ]);
+  assert.equal(res.excludedStandards.length, 0);
+  const sum = simulateRevenue(a, {}).monthlyYenTotal + simulateRevenue(b, {}).monthlyYenTotal;
+  assert.equal(res.monthlyYenTotal, sum);
+});
+
+test("once_per_month flag flows into revenue line", () => {
+  const dx = getStandardById("ha_dx_1")!;
+  const res = simulateRevenue(dx, {});
+  assert.ok(res.lines.some((l) => l.oncePerMonth === true));
+});
+
+test("standards with transitional_deadline parse to valid dates", () => {
+  for (const s of standards) {
+    if (s.transitional_deadline) {
+      const d = new Date(`${s.transitional_deadline}T00:00:00`);
+      assert.ok(!Number.isNaN(d.getTime()), `${s.id} has invalid deadline`);
+    }
+  }
 });

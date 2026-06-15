@@ -104,6 +104,7 @@ export const standards: DentalFacilityStandard[] = [
         { item: "歯科再診料 届出による差額（59-45）", points_per_event: 14, default_monthly_count_hint: 400 },
       ],
       formula: "(27 × 月間初診回数 + 14 × 月間再診回数) × 10円 ※届出あり/なしの差額",
+      exclusive_group: "shoshin_type",
     },
     verify_flags: [
       "届出様式2の6の最新記載項目は各厚生局PDFで最終確認",
@@ -178,6 +179,7 @@ export const standards: DentalFacilityStandard[] = [
         { item: "外安全1（再診）", points_per_event: 2, default_monthly_count_hint: 400 },
       ],
       formula: "(12 × 月間初診回数 + 2 × 月間再診回数) × 10円",
+      exclusive_group: "gaianzen",
     },
     verify_flags: ["外安全2（整理番号1-19・様式4の1の2）との要件差", "医療安全管理者の常勤要件"],
     last_updated: "2026-06-14",
@@ -236,6 +238,7 @@ export const standards: DentalFacilityStandard[] = [
         { item: "外感染1（再診）", points_per_event: 2, default_monthly_count_hint: 400 },
       ],
       formula: "(12 × 月間初診回数 + 2 × 月間再診回数) × 10円",
+      exclusive_group: "gaikansen",
     },
     verify_flags: [
       "外感染2（1-21・初診14/再診4点）/3（1-22・13/3点）/4（1-23・15/5点）は新興感染症対応（BCP・医科連携・研修1年に1回）等の追加要件あり",
@@ -316,10 +319,11 @@ export const standards: DentalFacilityStandard[] = [
     },
     transitional:
       "令和8年新設。旧「医療DX推進体制整備加算（歯科）」を置換して新設。旧加算からの自動移行はなく、令和8年6月1日以降の算定には改めて届出が必要（疑義解釈 別添3 問2）。電子カルテ情報共有サービスの活用要件は令和9年5月31日まで経過措置。施行は令和8年6月1日。",
+    transitional_deadline: "2027-05-31",
     revenue_sim: {
       linked_items: [
-        { item: "歯医DX1（初診）", points_per_event: 9, default_monthly_count_hint: 60 },
-        { item: "歯医DX（再診）", points_per_event: 2, default_monthly_count_hint: 400 },
+        { item: "歯医DX1（初診）", points_per_event: 9, default_monthly_count_hint: 60, once_per_month: true },
+        { item: "歯医DX（再診）", points_per_event: 2, default_monthly_count_hint: 400, once_per_month: true },
       ],
       formula: "(9 × 月間初診回数 + 2 × 月間再診回数) × 10円",
     },
@@ -496,6 +500,7 @@ export const standards: DentalFacilityStandard[] = [
     },
     transitional:
       "令和6年改定で旧「かかりつけ歯科医機能強化型歯科診療所（か強診）」から再編。令和9年5月31日まで、改正前（令和8年5月31日以前）の旧項目の算定回数を新項目分と合算して実績要件を満たして差し支えない。",
+    transitional_deadline: "2027-05-31",
     revenue_sim: {
       linked_items: [
         { item: "口腔管理体制強化加算（各管理料への上乗せ）", points_per_event: 48, default_monthly_count_hint: 120 },
@@ -597,12 +602,15 @@ export const standards: DentalFacilityStandard[] = [
       attachments: ["訪問診療実績がわかる資料", "連携先一覧", "研修受講を証する書類"],
       e_application_available: true,
     },
-    transitional: "歯援診2は整理番号2-93（同枠に在宅療養支援歯科病院2-94）。様式18は歯援診2では項目7以外を記載。",
+    transitional:
+      "歯援診2は整理番号2-93（同枠に在宅療養支援歯科病院2-94）。様式18は歯援診2では項目7以外を記載。訪問実績要件の変更は令和9年5月31日までみなし（期間内に新基準を満たす体制整備が必要）。",
+    transitional_deadline: "2027-05-31",
     revenue_sim: {
       linked_items: [
         { item: "在宅療養支援歯科診療所加算1（訪問診療料等への加算）", points_per_event: 100, default_monthly_count_hint: 20 },
       ],
       formula: "100 × 月間訪問関連算定回数 × 10円",
+      exclusive_group: "shien_type",
     },
     verify_flags: [
       "令和8年の訪問診療実績要件（選択制）の回数は解説一致だが告示原本（別添1 第14）で要最終照合",
@@ -1087,8 +1095,9 @@ export const standards: DentalFacilityStandard[] = [
     },
     transitional:
       "令和8年新設（旧・歯科衛生実地指導料の口腔機能指導加算12点から独立・格上げ）。研修受講要件は令和9年5月31日まで経過措置（みなし）。令和9年5月診療分までは様式17の4に受講予定の旨の記載で可（疑義解釈その1 問8）。",
+    transitional_deadline: "2027-05-31",
     revenue_sim: {
-      linked_items: [{ item: "口腔機能実地指導料", points_per_event: 46, default_monthly_count_hint: 30 }],
+      linked_items: [{ item: "口腔機能実地指導料", points_per_event: 46, default_monthly_count_hint: 30, once_per_month: true }],
       formula: "46 × 月間算定回数 × 10円（月1回上限）",
     },
     verify_flags: [
@@ -1288,6 +1297,7 @@ export const standards: DentalFacilityStandard[] = [
         { item: "外感染2（再診）", points_per_event: 4, default_monthly_count_hint: 400 },
       ],
       formula: "(14 × 月間初診回数 + 4 × 月間再診回数) × 10円",
+      exclusive_group: "gaikansen",
     },
     verify_flags: ["令和8点数の確定（14/4点は令和6値・据え置き見込み）", "外感染1との併用不可（区分はいずれか一方）"],
     last_updated: "2026-06-14",
@@ -1354,6 +1364,7 @@ export const standards: DentalFacilityStandard[] = [
         { item: "地域歯科診療支援病院歯科再診料", points_per_event: 76, default_monthly_count_hint: 400 },
       ],
       formula: "(296 × 月間初診回数 + 76 × 月間再診回数) × 10円",
+      exclusive_group: "shoshin_type",
     },
     verify_flags: [
       "病院向け基準。詳細な施設基準要件（人員・実績・連携）は告示・通知で要確認",
@@ -1427,6 +1438,7 @@ export const standards: DentalFacilityStandard[] = [
         { item: "外安全2（再診）", points_per_event: 3, default_monthly_count_hint: 400 },
       ],
       formula: "(13 × 月間初診回数 + 3 × 月間再診回数) × 10円",
+      exclusive_group: "gaianzen",
     },
     verify_flags: ["令和8点数の確定（13/3点は令和6値）", "病院向け（病初診が前提）"],
     last_updated: "2026-06-14",
@@ -1479,6 +1491,7 @@ export const standards: DentalFacilityStandard[] = [
         { item: "外感染3（再診）", points_per_event: 3, default_monthly_count_hint: 400 },
       ],
       formula: "(13 × 月間初診回数 + 3 × 月間再診回数) × 10円",
+      exclusive_group: "gaikansen",
     },
     verify_flags: ["令和8点数の確定（13/3点は令和6値）", "病院向け（病初診が前提）"],
     last_updated: "2026-06-14",
@@ -1542,6 +1555,7 @@ export const standards: DentalFacilityStandard[] = [
         { item: "外感染4（再診）", points_per_event: 5, default_monthly_count_hint: 400 },
       ],
       formula: "(15 × 月間初診回数 + 5 × 月間再診回数) × 10円",
+      exclusive_group: "gaikansen",
     },
     verify_flags: ["令和8点数の確定（15/5点は令和6値）", "病院向け（病初診が前提）"],
     last_updated: "2026-06-14",
@@ -1596,6 +1610,7 @@ export const standards: DentalFacilityStandard[] = [
     revenue_sim: {
       linked_items: [{ item: "在宅療養支援歯科病院加算", points_per_event: 100, default_monthly_count_hint: 20 }],
       formula: "100 × 月間訪問関連算定回数 × 10円",
+      exclusive_group: "shien_type",
     },
     verify_flags: ["整理番号2-94は局別・要確認", "病院向け基準。実績・連携要件は告示で要確認"],
     last_updated: "2026-06-14",

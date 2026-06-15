@@ -88,12 +88,20 @@ export interface RevenueSimItem {
   points_per_event: number;
   /** UI の月間回数入力の初期値ヒント。 */
   default_monthly_count_hint?: number;
+  /** 患者1人につき月1回までの算定（延べ回数の意味を明示するための表示用フラグ）。 */
+  once_per_month?: boolean;
 }
 
 export interface RevenueSim {
   linked_items: RevenueSimItem[];
   /** 人が読める算定式（表示用）。実際の計算は lib/revenue.ts が linked_items から行う。 */
   formula: string;
+  /**
+   * 同月に併算定できない（＝医療機関として通常いずれか一方しか算定しない）基準のグループID。
+   * 同じ exclusive_group を持つ基準が複数選択された場合、試算では最も収益の高い1つだけを計上する
+   * （例：外感染1〜4は通常いずれか1区分のみ、歯初診と病初診は施設種別で排他）。
+   */
+  exclusive_group?: string;
 }
 
 export type StandardCategory = "基本診療料" | "特掲診療料";
@@ -123,6 +131,8 @@ export interface DentalFacilityStandard {
   forms: Forms;
   /** 経過措置の記述（任意）。 */
   transitional: string;
+  /** 経過措置の「みなし終了日」（YYYY-MM-DD）。UIで「あと○日」のカウントダウンに使う。 */
+  transitional_deadline?: string;
   revenue_sim: RevenueSim;
   /** この基準に関して「要確認」とすべき論点。UI に注意表示する。 */
   verify_flags: string[];

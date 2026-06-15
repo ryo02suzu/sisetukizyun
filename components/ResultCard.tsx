@@ -10,6 +10,16 @@ const VERDICT_LABEL: Record<DiagnosisResult["verdict"], string> = {
   not_eligible: "届出不可",
 };
 
+/** 経過措置の「みなし終了日」から、現在日基準の残日数ラベルを作る。 */
+function deadlineInfo(dateStr: string): { label: string; past: boolean } {
+  const deadline = new Date(`${dateStr}T23:59:59`);
+  const now = new Date();
+  const days = Math.ceil((deadline.getTime() - now.getTime()) / 86_400_000);
+  if (days < 0) return { label: `みなし終了済み（${dateStr}）`, past: true };
+  if (days === 0) return { label: `本日みなし終了（${dateStr}）`, past: false };
+  return { label: `みなし終了まであと${days}日（${dateStr}まで）`, past: false };
+}
+
 export default function ResultCard({ result }: { result: DiagnosisResult }) {
   const [explain, setExplain] = useState<{ text: string; source: string } | null>(null);
   const [loading, setLoading] = useState(false);
@@ -181,9 +191,19 @@ export default function ResultCard({ result }: { result: DiagnosisResult }) {
             令和8年度）。届出先（管轄）の厚生局の令和8年度の届出様式一覧で必ずご確認ください。
           </div>
 
-          {standard.transitional && (
+          {(standard.transitional || standard.transitional_deadline) && (
             <div className="detail-row">
-              <span className="detail-label">経過措置</span> {standard.transitional}
+              <span className="detail-label">経過措置</span>
+              {standard.transitional_deadline && (
+                <span
+                  className={`deadline-badge ${
+                    deadlineInfo(standard.transitional_deadline).past ? "past" : ""
+                  }`}
+                >
+                  {deadlineInfo(standard.transitional_deadline).label}
+                </span>
+              )}{" "}
+              {standard.transitional}
             </div>
           )}
 
