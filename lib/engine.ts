@@ -139,7 +139,6 @@ export function diagnoseAll(
 ): DiagnosisResult[] {
   // まず prerequisites を無視して各基準の「条件のみ」の可否を求め、
   // それを eligibleIds の初期集合として prerequisites を解決する（最大 N 回反復で収束）。
-  const byId = new Map(standards.map((s) => [s.id, s]));
   let eligibleIds = new Set<string>();
 
   for (let iter = 0; iter < standards.length + 1; iter++) {

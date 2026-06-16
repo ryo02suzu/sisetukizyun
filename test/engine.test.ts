@@ -185,3 +185,54 @@ test("standards with transitional_deadline parse to valid dates", () => {
     }
   }
 });
+
+test("every standard has at least one requirement condition (guards empty->eligible)", () => {
+  const countLeaves = (cs: import("../lib/types").Condition[]): number =>
+    cs.reduce((n, c) => n + (c.sub_conditions?.length ? countLeaves(c.sub_conditions) : 1), 0);
+  for (const s of standards) {
+    const total =
+      countLeaves(s.requirements.equipment) +
+      countLeaves(s.requirements.staff) +
+      countLeaves(s.requirements.system) +
+      countLeaves(s.requirements.performance) +
+      countLeaves(s.requirements.training);
+    assert.ok(total >= 1, `${s.id} has zero conditions (would be auto-eligible)`);
+  }
+});
+
+test("no composite condition has empty sub_conditions (would be met=true)", () => {
+  const check = (cs: import("../lib/types").Condition[], sid: string) => {
+    for (const c of cs) {
+      if (c.type === "composite_or" || c.type === "composite_and") {
+        assert.ok(c.sub_conditions && c.sub_conditions.length > 0, `${sid}: empty composite "${c.label}"`);
+        check(c.sub_conditions, sid);
+      }
+    }
+  };
+  for (const s of standards) {
+    for (const cat of [s.requirements.equipment, s.requirements.staff, s.requirements.system, s.requirements.performance, s.requirements.training]) {
+      check(cat, s.id);
+    }
+  }
+});
+
+test("full-affirmative input yields zero not_eligible", () => {
+  const inputs: UserInputs = {};
+  const visit = (cs: import("../lib/types").Condition[]) => {
+    for (const c of cs) {
+      if (c.sub_conditions?.length) visit(c.sub_conditions);
+      else if (c.key) {
+        const t = c.type ?? "boolean";
+        inputs[c.key] = t === "number_min" || t === "threshold" ? 99999 : true;
+      }
+    }
+  };
+  for (const s of standards) {
+    for (const cat of [s.requirements.equipment, s.requirements.staff, s.requirements.system, s.requirements.performance, s.requirements.training]) {
+      visit(cat);
+    }
+  }
+  const results = diagnoseAll(standards, inputs);
+  const ng = results.filter((r) => r.verdict === "not_eligible");
+  assert.equal(ng.length, 0, `not_eligible under full input: ${ng.map((r) => r.standardId).join(",")}`);
+});
