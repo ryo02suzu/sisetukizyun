@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { DiagnosisResult } from "@/lib/types";
 import { getStandardById, getOfficialForms } from "@/data/standards";
+import { buildProcedure, buildRequiredDocuments } from "@/lib/filing";
 
 const VERDICT_LABEL: Record<DiagnosisResult["verdict"], string> = {
   eligible: "届出可能",
@@ -24,6 +25,7 @@ export default function ResultCard({ result }: { result: DiagnosisResult }) {
   const [explain, setExplain] = useState<{ text: string; source: string } | null>(null);
   const [loading, setLoading] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
+  const [checkedDocs, setCheckedDocs] = useState<Record<number, boolean>>({});
   const standard = getStandardById(result.standardId);
   const official = getOfficialForms(result.standardId);
 
@@ -114,7 +116,7 @@ export default function ResultCard({ result }: { result: DiagnosisResult }) {
             onClick={() => setShowDetail((v) => !v)}
             aria-expanded={showDetail}
           >
-            {showDetail ? "詳細を閉じる" : "点数・様式・出典を見る"}
+            {showDetail ? "閉じる" : "届出ガイド・点数・様式を見る"}
           </button>
         )}
       </div>
@@ -161,6 +163,36 @@ export default function ResultCard({ result }: { result: DiagnosisResult }) {
                 </li>
               </ul>
             </div>
+          </div>
+
+          <div className="filing-guide">
+            <div className="detail-label">申請手順</div>
+            <ol className="filing-steps">
+              {buildProcedure(standard).map((step, i) => (
+                <li key={i}>{step}</li>
+              ))}
+            </ol>
+          </div>
+
+          <div className="filing-guide">
+            <div className="detail-label">必要書類チェックリスト</div>
+            <ul className="filing-docs">
+              {buildRequiredDocuments(standard).map((d, i) => (
+                <li key={i}>
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={checkedDocs[i] ?? false}
+                      onChange={(e) =>
+                        setCheckedDocs((prev) => ({ ...prev, [i]: e.target.checked }))
+                      }
+                    />
+                    {d.label}
+                    {d.sub ? <span className="doc-sub">（{d.sub}）</span> : null}
+                  </label>
+                </li>
+              ))}
+            </ul>
           </div>
 
           <div className="detail-row">

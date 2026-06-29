@@ -271,3 +271,14 @@ test("unlock suggestions exclude eligible/needs_verify standards", async () => {
     assert.equal(r.verdict, "not_eligible");
   }
 });
+
+test("filing guide: procedure has 5 steps and docs include the 届出書", async () => {
+  const { buildProcedure, buildRequiredDocuments } = await import("../lib/filing");
+  const s = getStandardById("ha_shoshin")!;
+  const steps = buildProcedure(s);
+  assert.equal(steps.length, 5);
+  assert.ok(steps[1].includes(s.forms.todokede_form), "step2 references the 届出書 form");
+  const docs = buildRequiredDocuments(s);
+  assert.ok(docs.length >= 1);
+  assert.ok(docs[0].label.includes(s.forms.todokede_form), "first doc is the 届出書");
+});

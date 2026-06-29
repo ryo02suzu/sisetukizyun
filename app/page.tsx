@@ -8,6 +8,7 @@ import Questionnaire, { type QuestionGroup } from "@/components/Questionnaire";
 import ResultCard from "@/components/ResultCard";
 import RevenueSim from "@/components/RevenueSim";
 import UnlockSuggestions from "@/components/UnlockSuggestions";
+import CommonFilingRules from "@/components/CommonFilingRules";
 import { buildUnlockSuggestions, buildPrerequisiteDominoes } from "@/lib/suggest";
 
 type Step = "input" | "result" | "revenue";
@@ -256,6 +257,8 @@ export default function Page() {
           )}
 
           <UnlockSuggestions suggestions={suggestions} dominoes={dominoes} />
+
+          <CommonFilingRules />
 
           {basic.length > 0 && (
             <div className="panel">
