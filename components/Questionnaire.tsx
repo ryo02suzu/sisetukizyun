@@ -134,6 +134,8 @@ function QuestionRow({
           <button
             type="button"
             className={value === true ? "on-yes" : ""}
+            aria-label={`${q.label}：はい`}
+            aria-pressed={value === true}
             onClick={() => onChange(key, true)}
           >
             はい
@@ -141,6 +143,8 @@ function QuestionRow({
           <button
             type="button"
             className={value === false ? "on-no" : ""}
+            aria-label={`${q.label}：いいえ`}
+            aria-pressed={value === false}
             onClick={() => onChange(key, false)}
           >
             いいえ

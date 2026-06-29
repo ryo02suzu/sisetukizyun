@@ -218,6 +218,8 @@ export default function Page() {
             <button
               type="button"
               className={`stat clickable ${filter === "eligible" ? "sel" : ""}`}
+              aria-label="届出可能で絞り込み"
+              aria-pressed={filter === "eligible"}
               onClick={() => setFilter(filter === "eligible" ? "all" : "eligible")}
             >
               <div className="n" style={{ color: "var(--ok)" }}>
@@ -228,6 +230,8 @@ export default function Page() {
             <button
               type="button"
               className={`stat clickable ${filter === "needs_verify" ? "sel" : ""}`}
+              aria-label="要確認で絞り込み"
+              aria-pressed={filter === "needs_verify"}
               onClick={() => setFilter(filter === "needs_verify" ? "all" : "needs_verify")}
             >
               <div className="n" style={{ color: "var(--warn)" }}>
@@ -238,6 +242,8 @@ export default function Page() {
             <button
               type="button"
               className={`stat clickable ${filter === "not_eligible" ? "sel" : ""}`}
+              aria-label="届出不可で絞り込み"
+              aria-pressed={filter === "not_eligible"}
               onClick={() => setFilter(filter === "not_eligible" ? "all" : "not_eligible")}
             >
               <div className="n" style={{ color: "var(--ng)" }}>

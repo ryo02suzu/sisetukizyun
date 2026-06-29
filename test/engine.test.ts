@@ -282,3 +282,39 @@ test("filing guide: procedure has 5 steps and docs include the 届出書", async
   assert.ok(docs.length >= 1);
   assert.ok(docs[0].label.includes(s.forms.todokede_form), "first doc is the 届出書");
 });
+
+test("composite_or met: failed sibling not listed in unmet (spec §6.3)", async () => {
+  const { evaluateStandard } = await import("../lib/engine");
+  const s = {
+    id: "t_or", official_name: "t", common_name: "t", code_number: "x",
+    notification_ref: "", category: "特掲診療料", new_or_revised_r8: "継続",
+    prerequisites: [], requirements: {
+      equipment: [], staff: [], system: [], performance: [{
+        label: "or", type: "composite_or", sub_conditions: [
+          { key: "ra", label: "A" }, { key: "rb", label: "B" },
+        ],
+      }], training: [],
+    },
+    fees: [{ item_name: "x", points: 0 }], forms: { todokede_form: "別添2", attachment_forms: [], attachments: [], e_application_available: null },
+    transitional: "", revenue_sim: { linked_items: [], formula: "" }, verify_flags: [],
+    last_updated: "2026-06-15", source_version: "", sources: ["x"],
+  } as unknown as import("../lib/types").DentalFacilityStandard;
+  // A satisfied, B not -> composite met -> B should NOT be in unmetLabels
+  const r = evaluateStandard(s, { ra: true }, new Set());
+  assert.equal(r.verdict, "eligible");
+  assert.ok(!r.unmetLabels.includes("B"));
+});
+
+test("empty-requirements standard is not auto-eligible (defensive guard)", async () => {
+  const { evaluateStandard } = await import("../lib/engine");
+  const empty = {
+    id: "t_empty", official_name: "t", common_name: "t", code_number: "x",
+    notification_ref: "", category: "特掲診療料", new_or_revised_r8: "継続",
+    prerequisites: [], requirements: { equipment: [], staff: [], system: [], performance: [], training: [] },
+    fees: [{ item_name: "x", points: 0 }], forms: { todokede_form: "別添2", attachment_forms: [], attachments: [], e_application_available: null },
+    transitional: "", revenue_sim: { linked_items: [], formula: "" }, verify_flags: [],
+    last_updated: "2026-06-15", source_version: "", sources: ["x"],
+  } as unknown as import("../lib/types").DentalFacilityStandard;
+  const r = evaluateStandard(empty, {}, new Set());
+  assert.equal(r.verdict, "not_eligible");
+});

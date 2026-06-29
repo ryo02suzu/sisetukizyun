@@ -1212,8 +1212,9 @@ export const standards: DentalFacilityStandard[] = [
       linked_items: [
         { item: "補管（歯冠補綴物）", points_per_event: 100, default_monthly_count_hint: 30 },
         { item: "補管（ブリッジ5歯以下）", points_per_event: 330, default_monthly_count_hint: 5 },
+        { item: "補管（ブリッジ6歯以上）", points_per_event: 440, default_monthly_count_hint: 2 },
       ],
-      formula: "(100 × 歯冠補綴物装着 + 330 × ブリッジ装着) × 10円",
+      formula: "(100 × 歯冠補綴物 + 330 × ブリッジ5歯以下 + 440 × ブリッジ6歯以上) × 10円",
     },
     verify_flags: [
       "令和8整理番号2-580・様式81 PDF URLの最終検証（推定を含む）",

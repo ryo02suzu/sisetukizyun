@@ -104,7 +104,8 @@ export function evaluateStandard(
   // 基準そのものに付された要確認論点も合流させる
   for (const f of standard.verify_flags) verifyLabels.push(f);
 
-  const allConditionsMet = allResults.every((r) => r.met);
+  // 防御的措置：要件が1つも無い基準は無条件 eligible にしない（空配列の every は true のため）。
+  const allConditionsMet = allResults.length > 0 && allResults.every((r) => r.met);
   const prerequisitesMet = unmetPrerequisites.length === 0;
 
   let verdict: Verdict;
