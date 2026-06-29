@@ -236,3 +236,38 @@ test("full-affirmative input yields zero not_eligible", () => {
   const ng = results.filter((r) => r.verdict === "not_eligible");
   assert.equal(ng.length, 0, `not_eligible under full input: ${ng.map((r) => r.standardId).join(",")}`);
 });
+
+test("unlock suggestion surfaces prerequisite-only gap", async () => {
+  const { buildUnlockSuggestions } = await import("../lib/suggest");
+  const inputs: UserInputs = {
+    has_dental_suction: true,
+    staff_config_infection: true,
+    infection_manager: true,
+    infection_control_system: true,
+  };
+  const results = diagnoseAll(standards, inputs);
+  const sug = buildUnlockSuggestions(results, { maxGap: 5 });
+  const k = sug.find((s) => s.standardId === "gai_kansen_1");
+  assert.ok(k, "外感染1 should be suggested as close");
+  assert.equal(k!.prerequisiteOnly, true);
+  assert.ok(k!.gapPrerequisites.some((p) => p.id === "ha_shoshin"));
+});
+
+test("prerequisite domino lists dependents of ha_shoshin", async () => {
+  const { buildPrerequisiteDominoes } = await import("../lib/suggest");
+  const results = diagnoseAll(standards, {});
+  const dom = buildPrerequisiteDominoes(results, standards);
+  const ha = dom.find((d) => d.prerequisiteId === "ha_shoshin");
+  assert.ok(ha, "ha_shoshin domino expected");
+  assert.ok(ha!.unlocks.length >= 1, "should unlock at least one dependent");
+});
+
+test("unlock suggestions exclude eligible/needs_verify standards", async () => {
+  const { buildUnlockSuggestions } = await import("../lib/suggest");
+  const results = diagnoseAll(standards, {});
+  const sug = buildUnlockSuggestions(results, { maxGap: 99 });
+  for (const s of sug) {
+    const r = results.find((x) => x.standardId === s.standardId)!;
+    assert.equal(r.verdict, "not_eligible");
+  }
+});

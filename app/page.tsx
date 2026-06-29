@@ -7,6 +7,8 @@ import type { Condition, DiagnosisResult, UserInputs, Verdict } from "@/lib/type
 import Questionnaire, { type QuestionGroup } from "@/components/Questionnaire";
 import ResultCard from "@/components/ResultCard";
 import RevenueSim from "@/components/RevenueSim";
+import UnlockSuggestions from "@/components/UnlockSuggestions";
+import { buildUnlockSuggestions, buildPrerequisiteDominoes } from "@/lib/suggest";
 
 type Step = "input" | "result" | "revenue";
 type ResultFilter = "all" | Verdict;
@@ -135,6 +137,12 @@ export default function Page() {
     };
   }, [results]);
 
+  const suggestions = useMemo(() => (results ? buildUnlockSuggestions(results) : []), [results]);
+  const dominoes = useMemo(
+    () => (results ? buildPrerequisiteDominoes(results, standards) : []),
+    [results],
+  );
+
   const visible = useMemo(
     () => (results ?? []).filter((r) => filter === "all" || r.verdict === filter),
     [results, filter],
@@ -246,6 +254,8 @@ export default function Page() {
               </button>
             </p>
           )}
+
+          <UnlockSuggestions suggestions={suggestions} dominoes={dominoes} />
 
           {basic.length > 0 && (
             <div className="panel">

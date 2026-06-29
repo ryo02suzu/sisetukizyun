@@ -793,3 +793,104 @@ input[type="number"] {
   background: var(--bg);
   border-color: var(--border);
 }
+
+/* ── アンロック提案 ── */
+.unlock-panel {
+  border-color: #cdd6e2;
+}
+.unlock-sort {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.chip {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--muted);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.chip.on {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-bg);
+  font-weight: 600;
+}
+.unlock-card {
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+.unlock-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.unlock-title {
+  font-weight: 600;
+}
+.unlock-cat {
+  margin-left: 8px;
+  font-size: 11px;
+  color: var(--muted);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-weight: 400;
+}
+.gap-badge {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--accent-bg);
+  border-radius: 999px;
+  padding: 3px 12px;
+  white-space: nowrap;
+}
+.unlock-gaps {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  font-size: 13px;
+}
+.unlock-prereq {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--text);
+}
+.unlock-rev {
+  margin-top: 8px;
+  font-size: 14px;
+}
+.unlock-rev strong {
+  color: var(--ok);
+}
+.unlock-rev-na {
+  font-size: 12px;
+  color: var(--muted);
+}
+.domino-box {
+  margin-top: 12px;
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+.domino-title {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.domino-row {
+  margin: 4px 0;
+  font-size: 13px;
+}
