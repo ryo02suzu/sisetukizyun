@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><rect x="0" y="0" width="512" height="512" rx="96" fill="#1f6feb"/>
+  <path transform="translate(256 256) scale(0.86) translate(-256 -256)" fill="#ffffff"
+    d="M256 104
+       C330 104 396 156 396 236
+       C396 306 362 344 338 408
+       C326 440 312 442 300 408
+       C291 382 282 366 256 366
+       C230 366 221 382 212 408
+       C200 442 186 440 174 408
+       C150 344 116 306 116 236
+       C116 156 182 104 256 104 Z"/></svg>
