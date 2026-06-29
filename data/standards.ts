@@ -1845,30 +1845,36 @@ export const officialForms: Record<string, OfficialForms> = {
 // ─────────────────────────────────────────────────────────────────────────────
 // 地方厚生局（8ブロック）。整理番号・様式番号・様式PDFのファイル名は全国共通で、
 // 地域で異なるのは「PDFのホストパス（/kinki/ → /kantoshinetsu/ 等）」と「提出先窓口」のみ。
-// confirmed=true は整理番号・PDF規則を一次情報で確認済みの局。
+// 全8局とも、近畿の様式PDF 45本のうち44本がパス差し替えでそのまま取得できることを
+// HTTPステータス（200 / application/pdf）で実機検証済み（2026-06）。唯一の例外は様式94
+// （特別事情届出書）で、近畿・九州のみ単独PDF、他6局は様式95〜100の統合PDFに同梱される。
+// confirmed=true は様式PDFの取得規則を実機検証済みの局。
 // ─────────────────────────────────────────────────────────────────────────────
 export interface BureauInfo {
   /** パス兼ID（例 "kantoshinetsu"）。 */
   id: string;
   name: string;
-  /** 届出案内ページURL。 */
+  /** 届出案内ページURL（局トップ）。 */
   url: string;
-  /** 整理番号・様式PDFの規則を一次情報で確認済みか。 */
+  /** 様式PDFの取得規則を実機検証済みか。 */
   confirmed: boolean;
 }
 
 export const BUREAUS_INFO: BureauInfo[] = [
-  { id: "hokkaido", name: "北海道厚生局", url: "https://kouseikyoku.mhlw.go.jp/hokkaido/", confirmed: false },
-  { id: "tohoku", name: "東北厚生局", url: "https://kouseikyoku.mhlw.go.jp/tohoku/", confirmed: false },
-  { id: "kantoshinetsu", name: "関東信越厚生局", url: "https://kouseikyoku.mhlw.go.jp/kantoshinetsu/shinsei/shido_kansa/shitei_kijun/", confirmed: true },
+  { id: "hokkaido", name: "北海道厚生局", url: "https://kouseikyoku.mhlw.go.jp/hokkaido/", confirmed: true },
+  { id: "tohoku", name: "東北厚生局", url: "https://kouseikyoku.mhlw.go.jp/tohoku/", confirmed: true },
+  { id: "kantoshinetsu", name: "関東信越厚生局", url: "https://kouseikyoku.mhlw.go.jp/kantoshinetsu/", confirmed: true },
   { id: "tokaihokuriku", name: "東海北陸厚生局", url: "https://kouseikyoku.mhlw.go.jp/tokaihokuriku/", confirmed: true },
-  { id: "kinki", name: "近畿厚生局", url: "https://kouseikyoku.mhlw.go.jp/kinki/shinsei/shido_kansa/shitei_kijun/", confirmed: true },
-  { id: "chugokushikoku", name: "中国四国厚生局", url: "https://kouseikyoku.mhlw.go.jp/chugokushikoku/", confirmed: false },
-  { id: "shikoku", name: "四国厚生支局", url: "https://kouseikyoku.mhlw.go.jp/shikoku/", confirmed: false },
+  { id: "kinki", name: "近畿厚生局", url: "https://kouseikyoku.mhlw.go.jp/kinki/", confirmed: true },
+  { id: "chugokushikoku", name: "中国四国厚生局", url: "https://kouseikyoku.mhlw.go.jp/chugokushikoku/", confirmed: true },
+  { id: "shikoku", name: "四国厚生支局", url: "https://kouseikyoku.mhlw.go.jp/shikoku/", confirmed: true },
   { id: "kyushu", name: "九州厚生局", url: "https://kouseikyoku.mhlw.go.jp/kyushu/", confirmed: true },
 ];
 
 export const DEFAULT_BUREAU = "kinki";
+
+// 様式94（特別事情届出書）を「単独PDF」で持つ局。他局は様式95〜100の統合PDFに同梱。
+const STANDALONE_94_BUREAUS = new Set(["kinki", "kyushu"]);
 
 export function getBureauInfo(bureauId: string): BureauInfo {
   return BUREAUS_INFO.find((b) => b.id === bureauId) ?? BUREAUS_INFO.find((b) => b.id === "kinki")!;
@@ -1877,17 +1883,30 @@ export function getBureauInfo(bureauId: string): BureauInfo {
 /**
  * id と管轄局で公式様式を引く。様式PDFのファイル名は全国共通のため、
  * 近畿のURLのホストパスを選択局に差し替えて返す。
+ * 様式94だけは近畿・九州のみ単独PDFのため、他局では単独リンクを落とし、
+ * 統合PDF（様式95〜100）のラベルに「94含む」を補記する。
  */
 export function getOfficialForms(id: string, bureauId: string = DEFAULT_BUREAU): OfficialForms | undefined {
   const base = officialForms[id];
   if (!base) return undefined;
   const info = getBureauInfo(bureauId);
-  const label = `${info.name} 令和8${info.confirmed ? "" : "（URL規則は要確認）"}`;
+  const label = `${info.name} 令和8`;
   if (info.id === "kinki") return { ...base, bureau: label };
   const swap = (u: string) => u.replace("/kinki/", `/${info.id}/`);
+  const has94 = STANDALONE_94_BUREAUS.has(info.id);
+  const forms: { label: string; url: string }[] = [];
+  for (const f of base.forms) {
+    const file = f.url.split("/").pop() ?? "";
+    if (file === "r8-t94.pdf" && !has94) continue; // この局では統合PDFに同梱
+    const lbl =
+      file === "r8-t95-100.pdf" && !has94
+        ? "様式94〜100（統合・特別事情届出書を含む）"
+        : f.label;
+    forms.push({ label: lbl, url: swap(f.url) });
+  }
   return {
     bureau: label,
     common: { label: base.common.label, url: swap(base.common.url) },
-    forms: base.forms.map((f) => ({ label: f.label, url: swap(f.url) })),
+    forms,
   };
 }

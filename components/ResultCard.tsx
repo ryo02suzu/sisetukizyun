@@ -243,8 +243,9 @@ export default function ResultCard({
           )}
 
           <div className="detail-note">
-            ※ 整理番号・届出様式・様式PDFは地方厚生局・改定年度ごとに異なります（上記は近畿厚生局
-            令和8年度）。届出先（管轄）の厚生局の令和8年度の届出様式一覧で必ずご確認ください。
+            ※ 整理番号・様式番号は全国共通です。様式PDFは選択中の管轄局（
+            {official?.bureau ?? "近畿厚生局 令和8"}）のものを表示しています。改定年度・局の更新で
+            差し替わる場合があるため、提出前に管轄局の令和8年度 届出様式一覧で最終確認してください。
           </div>
 
           {(standard.transitional || standard.transitional_deadline) && (
