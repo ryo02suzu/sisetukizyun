@@ -4,6 +4,15 @@ import { useState } from "react";
 import type { DiagnosisResult } from "@/lib/types";
 import { getStandardById, getOfficialForms } from "@/data/standards";
 import { buildProcedure, buildRequiredDocuments } from "@/lib/filing";
+import { collectUnmetLabels } from "@/lib/engine";
+
+const CATEGORY_ORDER = [
+  { key: "equipment", label: "設備" },
+  { key: "staff", label: "人員" },
+  { key: "system", label: "体制" },
+  { key: "performance", label: "実績" },
+  { key: "training", label: "研修" },
+] as const;
 
 const VERDICT_LABEL: Record<DiagnosisResult["verdict"], string> = {
   eligible: "届出可能",
@@ -81,11 +90,20 @@ export default function ResultCard({ result }: { result: DiagnosisResult }) {
       {result.unmetLabels.length > 0 && (
         <div className="reasons">
           <span className="heading">不足している要件：</span>
-          <ul>
-            {result.unmetLabels.map((l, i) => (
-              <li key={i}>{l}</li>
-            ))}
-          </ul>
+          {CATEGORY_ORDER.map(({ key, label }) => {
+            const items = collectUnmetLabels(result.conditionResults[key]);
+            if (items.length === 0) return null;
+            return (
+              <div className="unmet-cat" key={key}>
+                <span className={`cat-chip cat-${key}`}>{label}</span>
+                <ul>
+                  {items.map((l, i) => (
+                    <li key={i}>{l}</li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
         </div>
       )}
 
@@ -236,6 +254,12 @@ export default function ResultCard({ result }: { result: DiagnosisResult }) {
                 </span>
               )}{" "}
               {standard.transitional}
+              {standard.transitional_deadline && (
+                <span className="doc-sub">
+                  {" "}
+                  ※ 期限までは経過措置（みなし）の扱い。期限後は新基準を満たす必要があるため、並行して体制整備を。
+                </span>
+              )}
             </div>
           )}
 

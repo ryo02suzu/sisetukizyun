@@ -62,6 +62,13 @@ function collectUnmet(results: ConditionResult[], acc: string[]): void {
   }
 }
 
+/** ConditionResult[] から未充足ラベルを集める公開ヘルパー（UIのカテゴリ別表示用）。 */
+export function collectUnmetLabels(results: ConditionResult[]): string[] {
+  const acc: string[] = [];
+  collectUnmet(results, acc);
+  return acc;
+}
+
 function collectVerify(results: ConditionResult[], acc: string[]): void {
   for (const r of results) {
     if (r.needsVerify) acc.push(r.label);

@@ -49,8 +49,8 @@ export default function RevenueSim({ standards }: Props) {
   return (
     <>
       <p className="sub">
-        各項目の<strong>月間算定回数</strong>を入力すると、1点=10円で月額・年額を試算します（点数 ×
-        回数 × 10円の単純合算）。試算に含める基準はチェックで選べます。
+        各項目の<strong>月間算定回数</strong>（自院の直近のレセプト件数を目安に）を入力すると、1点=10円で月額・年額を試算します（点数 ×
+        回数 × 10円の単純合算）。初期値は一般的な小規模診療所の目安です。試算に含める基準はチェックで選べます。
       </p>
 
       <div className="include-grid no-print">
@@ -67,6 +67,13 @@ export default function RevenueSim({ standards }: Props) {
           </label>
         ))}
       </div>
+
+      {result.excludedStandards.length > 0 && (
+        <div className="rev-exclusion-notice no-print">
+          ⚠ 同月に併算定しない区分（{result.excludedStandards.join("・")}
+          ）が複数選択されています。収益が最大の1つだけを合計に計上し、他は下表で「除外」と表示しています。
+        </div>
+      )}
 
       <table className="rev-table">
         <thead>

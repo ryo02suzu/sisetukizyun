@@ -75,6 +75,10 @@ export default function Page() {
   const [hydrated, setHydrated] = useState(false);
 
   const groups = useMemo(() => buildQuestionGroups(), []);
+  const totalQuestions = useMemo(
+    () => groups.reduce((n, g) => n + g.questions.length, 0),
+    [groups],
+  );
 
   // 起動時に前回の回答を復元。
   useEffect(() => {
@@ -188,8 +192,8 @@ export default function Page() {
         <div className="panel">
           <h2>診療所の状況を入力してください</h2>
           <p className="sub">
-            設備・人員・体制・実績・研修について回答すると、{standards.length}{" "}
-            件の施設基準について届出可否を判定します。「要確認」タグの項目は、満たしていても届出前に厚生局確認が必要な論点です。回答はこの端末に自動保存されます。
+            設備・人員・体制・実績・研修について<strong>全{totalQuestions}問</strong>（所要 約5分）に回答すると、
+            {standards.length} 件の施設基準について届出可否を判定します。「要確認」タグの項目は、満たしていても届出前に厚生局確認が必要な論点です。回答はこの端末に自動保存されます。
           </p>
           <Questionnaire
             groups={groups}

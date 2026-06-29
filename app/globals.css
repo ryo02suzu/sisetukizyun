@@ -973,3 +973,36 @@ input:focus-visible,
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
+
+/* ── 判定理由のカテゴリ別表示 ── */
+.unmet-cat {
+  margin-top: 6px;
+}
+.unmet-cat ul {
+  margin: 2px 0 0;
+  padding-left: 18px;
+}
+.cat-chip {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 4px;
+  padding: 1px 8px;
+  color: #fff;
+}
+.cat-equipment { background: #6b7280; }
+.cat-staff { background: #2563eb; }
+.cat-system { background: #0891b2; }
+.cat-performance { background: #9333ea; }
+.cat-training { background: #c2410c; }
+
+/* ── 収益試算の排他インライン警告 ── */
+.rev-exclusion-notice {
+  background: var(--warn-bg);
+  border: 1px solid #f0e0b0;
+  color: var(--warn);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
