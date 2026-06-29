@@ -30,13 +30,19 @@ function deadlineInfo(dateStr: string): { label: string; past: boolean } {
   return { label: `みなし終了まであと${days}日（${dateStr}まで）`, past: false };
 }
 
-export default function ResultCard({ result }: { result: DiagnosisResult }) {
+export default function ResultCard({
+  result,
+  bureau,
+}: {
+  result: DiagnosisResult;
+  bureau?: string;
+}) {
   const [explain, setExplain] = useState<{ text: string; source: string } | null>(null);
   const [loading, setLoading] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
   const [checkedDocs, setCheckedDocs] = useState<Record<number, boolean>>({});
   const standard = getStandardById(result.standardId);
-  const official = getOfficialForms(result.standardId);
+  const official = getOfficialForms(result.standardId, bureau);
 
   async function fetchExplanation() {
     setLoading(true);

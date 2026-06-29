@@ -1006,3 +1006,35 @@ input:focus-visible,
   font-size: 13px;
   margin-bottom: 12px;
 }
+
+/* ── 地域（厚生局）セレクタ ── */
+.region-select {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.region-select label {
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 600;
+}
+.region-select select {
+  margin-left: 6px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  background: var(--panel);
+}
+.region-note {
+  font-size: 12px;
+  color: var(--muted);
+}
+.filing-selected-bureau {
+  font-size: 13px;
+  margin: 6px 0;
+  background: var(--accent-bg);
+  border-radius: 6px;
+  padding: 6px 10px;
+}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { standards, getStandardById } from "@/data/standards";
+import { standards, getStandardById, BUREAUS_INFO, DEFAULT_BUREAU } from "@/data/standards";
 import { diagnoseAll } from "@/lib/engine";
 import type { Condition, DiagnosisResult, UserInputs, Verdict } from "@/lib/types";
 import Questionnaire, { type QuestionGroup } from "@/components/Questionnaire";
@@ -15,6 +15,7 @@ type Step = "input" | "result" | "revenue";
 type ResultFilter = "all" | Verdict;
 
 const STORAGE_KEY = "dental-facility-inputs-v1";
+const BUREAU_KEY = "dental-facility-bureau-v1";
 
 // 全基準から、要件カテゴリ別に一意な設問を収集する。
 function buildQuestionGroups(): QuestionGroup[] {
@@ -72,6 +73,7 @@ export default function Page() {
   const [inputs, setInputs] = useState<UserInputs>({});
   const [results, setResults] = useState<DiagnosisResult[] | null>(null);
   const [filter, setFilter] = useState<ResultFilter>("all");
+  const [bureau, setBureau] = useState<string>(DEFAULT_BUREAU);
   const [hydrated, setHydrated] = useState(false);
 
   const groups = useMemo(() => buildQuestionGroups(), []);
@@ -85,11 +87,22 @@ export default function Page() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) setInputs(JSON.parse(raw) as UserInputs);
+      const b = localStorage.getItem(BUREAU_KEY);
+      if (b) setBureau(b);
     } catch {
       /* ignore */
     }
     setHydrated(true);
   }, []);
+
+  function onBureauChange(next: string) {
+    setBureau(next);
+    try {
+      localStorage.setItem(BUREAU_KEY, next);
+    } catch {
+      /* ignore */
+    }
+  }
 
   // 回答を保存。
   useEffect(() => {
@@ -160,6 +173,22 @@ export default function Page() {
       <header className="app no-print">
         <h1>歯科 施設基準 届出可否 診断</h1>
         <p>令和8年度（2026年6月施行）改定対応 ／ 届出可否の判定・収益試算</p>
+        <div className="region-select">
+          <label htmlFor="bureau">
+            管轄の地方厚生局：
+            <select id="bureau" value={bureau} onChange={(e) => onBureauChange(e.target.value)}>
+              {BUREAUS_INFO.map((b) => (
+                <option key={b.id} value={b.id}>
+                  {b.name}
+                  {b.confirmed ? "" : "（要確認）"}
+                </option>
+              ))}
+            </select>
+          </label>
+          <span className="region-note">
+            ※ 要件・点数・判定は全国共通。整理番号・様式PDFの参照先・提出先のみ管轄局で切り替わります。
+          </span>
+        </div>
       </header>
 
       <div className="steps no-print">
@@ -268,14 +297,14 @@ export default function Page() {
 
           <UnlockSuggestions suggestions={suggestions} dominoes={dominoes} />
 
-          <CommonFilingRules />
+          <CommonFilingRules bureau={bureau} />
 
           {basic.length > 0 && (
             <div className="panel">
               <h2>基本診療料系</h2>
               <p className="sub">院内感染防止対策・外来診療体制・医療DX・ベースアップ評価料 等</p>
               {basic.map((r) => (
-                <ResultCard key={r.standardId} result={r} />
+                <ResultCard key={r.standardId} result={r} bureau={bureau} />
               ))}
             </div>
           )}
@@ -285,7 +314,7 @@ export default function Page() {
               <h2>特掲診療料系</h2>
               <p className="sub">口腔管理体制強化・在宅療養支援・CAD/CAM・検査・手術 等</p>
               {tokutei.map((r) => (
-                <ResultCard key={r.standardId} result={r} />
+                <ResultCard key={r.standardId} result={r} bureau={bureau} />
               ))}
             </div>
           )}
