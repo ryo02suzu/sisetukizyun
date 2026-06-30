@@ -853,8 +853,8 @@ export const standards: DentalFacilityStandard[] = [
     id: "gtr",
     official_name: "歯周組織再生誘導手術（GTR）に係る施設基準",
     common_name: "GTR",
-    code_number: "2-484（区分 J063）",
-    code_number_bureau: "九州 令和6（令和8要確認）",
+    code_number: "2-538（区分 J063）",
+    code_number_bureau: "令和8（全国共通・近畿届出様式一覧で確認済み）",
     notification_ref: "J063 / 保医発0305第8号",
     category: "特掲診療料",
     new_or_revised_r8: "継続",
@@ -880,11 +880,11 @@ export const standards: DentalFacilityStandard[] = [
     ],
     forms: {
       todokede_form: "別添2",
-      attachment_forms: ["様式74"],
+      attachment_forms: [],
       attachments: ["歯科医師の経験を証する資料"],
       e_application_available: null,
     },
-    transitional: "R6からの継続。整理番号2-484（九州厚生局）。GTR1次手術時は歯根面レーザー応用加算+60点。",
+    transitional: "R6からの継続。整理番号2-538（令和8・近畿届出様式一覧で確認）。届出は別添2のみ（追加様式なし）。GTR1次手術時は歯根面レーザー応用加算+60点。",
     revenue_sim: {
       linked_items: [
         { item: "歯周組織再生誘導手術 1次手術", points_per_event: 840, default_monthly_count_hint: 2 },
@@ -892,8 +892,7 @@ export const standards: DentalFacilityStandard[] = [
       formula: "840 × 月間1次手術算定回数 × 10円",
     },
     verify_flags: [
-      "整理番号2-484は九州厚生局令和6。令和8・他局の整理番号は要確認",
-      "届出様式番号（暫定様式74は一次未確認）",
+      "歯周病治療5年以上の経験を有する歯科医師の配置は自己申告のため、実態に即しているか確認",
     ],
     last_updated: "2026-06-14",
     source_version: "告示第69号（r08歯科点数表 J063で令和8点数840/380点を確認）",
@@ -1745,12 +1744,15 @@ export const officialForms: Record<string, OfficialForms> = {
   gtr: {
     bureau: "近畿 令和8",
     common: { label: "共通届出書 別添2", url: BESSHI2 },
-    forms: [{ label: "別添2（GTR）※命名規則上ほぼ確実・要確認", url: KINKI_PDF + "r8-2-484.pdf" }],
+    forms: [{ label: "別添2（GTR）", url: KINKI_PDF + "r8-2-538.pdf" }],
   },
   laser_koku_nenmaku: {
     bureau: "近畿 令和8",
     common: { label: "共通届出書 別添2", url: BESSHI2 },
-    forms: [{ label: "様式49の9", url: KINKI_PDF + "r8-t49-9.pdf" }],
+    forms: [
+      { label: "別添2（口腔粘膜処置）", url: KINKI_PDF + "r8-2-296.pdf" },
+      { label: "様式49の9", url: KINKI_PDF + "r8-t49-9.pdf" },
+    ],
   },
   kikan_anzen_shika: {
     bureau: "近畿 令和8",
@@ -1773,7 +1775,7 @@ export const officialForms: Record<string, OfficialForms> = {
     common: { label: "共通届出書 別添2", url: BESSHI2 },
     forms: [
       { label: "別添2（口実地）", url: KINKI_PDF + "r8-2-091.pdf" },
-      { label: "様式17の4 ※推定・要検証", url: KINKI_PDF + "r8-t17-4.pdf" },
+      { label: "様式17の4", url: KINKI_PDF + "r8-t17-4.pdf" },
     ],
   },
   zaikan: {
@@ -1789,7 +1791,7 @@ export const officialForms: Record<string, OfficialForms> = {
     common: { label: "共通届出書 別添2", url: BESSHI2 },
     forms: [
       { label: "別添2（補管）", url: KINKI_PDF + "r8-2-580.pdf" },
-      { label: "様式81 ※推定・要検証", url: KINKI_PDF + "r8-t81.pdf" },
+      { label: "様式81", url: KINKI_PDF + "r8-t81.pdf" },
     ],
   },
   gai_kansen_2: {
@@ -1804,7 +1806,7 @@ export const officialForms: Record<string, OfficialForms> = {
     bureau: "近畿 令和8",
     common: { label: "共通届出書 別添7", url: BESSHI7 },
     forms: [
-      { label: "別添7（病初診）※推定・要検証", url: KINKI_PDF + "r8-1-017.pdf" },
+      { label: "別添7（病初診）", url: KINKI_PDF + "r8-1-017.pdf" },
       { label: "様式3", url: KINKI_PDF + "r8-k03.pdf" },
     ],
   },
@@ -1836,7 +1838,7 @@ export const officialForms: Record<string, OfficialForms> = {
     bureau: "近畿 令和8",
     common: { label: "共通届出書 別添2", url: BESSHI2 },
     forms: [
-      { label: "別添2（歯援病）※推定・要検証", url: KINKI_PDF + "r8-2-094.pdf" },
+      { label: "別添2（歯援病）", url: KINKI_PDF + "r8-2-094.pdf" },
       { label: "様式18", url: KINKI_PDF + "r8-t18.pdf" },
     ],
   },
