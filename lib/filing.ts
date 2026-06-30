@@ -35,7 +35,7 @@ export const BUREAUS: { name: string; url: string }[] = [
   { name: "東北厚生局", url: "https://kouseikyoku.mhlw.go.jp/tohoku/" },
   { name: "関東信越厚生局", url: "https://kouseikyoku.mhlw.go.jp/kantoshinetsu/" },
   { name: "東海北陸厚生局", url: "https://kouseikyoku.mhlw.go.jp/tokaihokuriku/" },
-  { name: "近畿厚生局", url: "https://kouseikyoku.mhlw.go.jp/kinki/shinsei/shido_kansa/shitei_kijun/" },
+  { name: "近畿厚生局", url: "https://kouseikyoku.mhlw.go.jp/kinki/" },
   { name: "中国四国厚生局", url: "https://kouseikyoku.mhlw.go.jp/chugokushikoku/" },
   { name: "四国厚生支局", url: "https://kouseikyoku.mhlw.go.jp/shikoku/" },
   { name: "九州厚生局", url: "https://kouseikyoku.mhlw.go.jp/kyushu/" },
@@ -56,11 +56,19 @@ export function buildProcedure(s: DentalFacilityStandard): string[] {
       ? `添付書類（${s.forms.attachments.join("、")}）を揃える`
       : "必要に応じて疎明資料（研修修了証の写し等）を揃える";
 
+  // 提出方法は基準ごとに異なる。電子申請に非対応の基準（例：ベースアップ評価料は
+  // 電子申請・届出システムでは受け付けず専用の方法で提出）に「電子申請可」と
+  // 案内すると受理されず算定開始が遅れるため、e_application_available で分岐する。
+  const submit =
+    s.forms.e_application_available === false
+      ? `提出：本基準は電子申請・届出システムでは受け付けません。管轄の地方厚生（支）局が定める本基準専用の提出方法（所定の様式・提出先）に従って提出（FAX不可・押印不要／開設者・管理者の記名は必須）`
+      : `提出：自院を管轄する地方厚生（支）局へ 正本1通を郵送 または 電子申請（FAX不可・押印不要／開設者・管理者の記名は必須・副本不要）`;
+
   return [
     `要件を満たす：本基準の設備・人員・体制・実績・研修の要件をすべて満たす${verifyNote}${prereqNote}`,
     `届出書に記入：${s.forms.todokede_form}${attach} に記入する`,
     docs,
-    `提出：自院を管轄する地方厚生（支）局へ 正本1通を郵送 または 電子申請（FAX不可・押印不要／開設者・管理者の記名は必須・副本不要）`,
+    submit,
     `算定開始：月末までに受理されれば翌月1日から、月の最初の開庁日に受理されれば当月1日から算定（遡及不可）`,
   ];
 }

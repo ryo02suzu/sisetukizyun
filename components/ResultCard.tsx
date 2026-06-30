@@ -150,7 +150,7 @@ export default function ResultCard({
           {explain.text}
           <span className="src">
             {explain.source === "llm"
-              ? "※ AI（Claude）が判定結果を言い換えた解説です。判定自体はルールエンジンによる確定的なものです。"
+              ? "※ AI（Claude）が判定結果を言い換えた解説です。判定ロジックは決定論的（同じ入力には同じ結果を返す）ですが、結論の正しさを保証するものではありません。要確認・経過措置・整理番号・様式は厚生局で最終確認してください。"
               : "※ ルールベースの解説です（AI解説は ANTHROPIC_API_KEY 設定時に有効）。"}
           </span>
         </div>

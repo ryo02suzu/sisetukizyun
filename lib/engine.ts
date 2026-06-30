@@ -53,9 +53,11 @@ function evaluateGroup(conds: Condition[], inputs: UserInputs): ConditionResult[
 function collectUnmet(results: ConditionResult[], acc: string[]): void {
   for (const r of results) {
     if (r.children && r.children.length > 0) {
+      // composite（OR/AND）が未充足のときは「要約ラベル1件」だけを未充足として記録する。
+      // 子葉まで展開すると、OR条件を「全選択肢を満たす必要がある」と誤表示し、
+      // さらに lib/suggest.ts の gapCount（=unmetLabels数）を過大化して
+      // 「あと一歩で出せる加算」提案を取りこぼすため、子へは再帰しない。
       if (!r.met) acc.push(r.label);
-      // composite が満たされていれば子の未充足は記録しない（OR/AND の結果が重要）
-      if (!r.met) collectUnmet(r.children, acc);
     } else if (!r.met) {
       acc.push(r.label);
     }

@@ -625,6 +625,51 @@ input[type="number"] {
   border-top: 1px solid var(--border);
   padding-top: 14px;
 }
+.app-footer p {
+  margin: 0 0 6px;
+}
+.app-footer .footer-links a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* ── legal pages (利用規約・プライバシー) ── */
+.legal-page {
+  max-width: 760px;
+  line-height: 1.8;
+}
+.legal-page h1 {
+  font-size: 22px;
+  margin-bottom: 4px;
+}
+.legal-page h2 {
+  font-size: 16px;
+  margin-top: 22px;
+}
+.legal-page section {
+  margin-bottom: 8px;
+}
+.legal-page ul {
+  padding-left: 1.2em;
+}
+.legal-updated {
+  color: var(--muted);
+  font-size: 12px;
+}
+.legal-note {
+  margin-top: 24px;
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--warn-bg);
+  border: 1px solid #f0e0b0;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+.legal-back a {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 13px;
+}
 .print-title {
   display: none;
 }

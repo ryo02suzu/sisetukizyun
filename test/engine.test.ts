@@ -305,6 +305,30 @@ test("composite_or met: failed sibling not listed in unmet (spec §6.3)", async 
   assert.ok(!r.unmetLabels.includes("B"));
 });
 
+test("composite_or unmet: only the parent summary label is counted, not each child", async () => {
+  const { evaluateStandard } = await import("../lib/engine");
+  const s = {
+    id: "t_or2", official_name: "t", common_name: "t", code_number: "x",
+    notification_ref: "", category: "特掲診療料", new_or_revised_r8: "継続",
+    prerequisites: [], requirements: {
+      equipment: [], staff: [], system: [], performance: [{
+        label: "実績(いずれか)", type: "composite_or", sub_conditions: [
+          { key: "ra", label: "A" }, { key: "rb", label: "B" },
+          { key: "rc", label: "C" }, { key: "rd", label: "D" },
+        ],
+      }], training: [],
+    },
+    fees: [{ item_name: "x", points: 0 }], forms: { todokede_form: "別添2", attachment_forms: [], attachments: [], e_application_available: null },
+    transitional: "", revenue_sim: { linked_items: [], formula: "" }, verify_flags: [],
+    last_updated: "2026-06-15", source_version: "", sources: ["x"],
+  } as unknown as import("../lib/types").DentalFacilityStandard;
+  // すべて未充足 → composite は未充足。親要約1件のみ計上し、子A〜Dは展開しない。
+  const r = evaluateStandard(s, {}, new Set());
+  assert.equal(r.verdict, "not_eligible");
+  assert.deepEqual(r.unmetLabels, ["実績(いずれか)"]);
+  assert.equal(r.unmetLabels.length, 1, "gapCount inflation regression: composite counts as 1");
+});
+
 test("empty-requirements standard is not auto-eligible (defensive guard)", async () => {
   const { evaluateStandard } = await import("../lib/engine");
   const empty = {

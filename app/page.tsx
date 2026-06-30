@@ -87,8 +87,11 @@ export default function Page() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) setInputs(JSON.parse(raw) as UserInputs);
+      // 旧バージョンの値や破損文字列がそのまま復元されると、セレクタ表示（先頭局）と
+      // 実際の様式PDF/提出先（kinkiへ黙ってフォールバック）が食い違うため、既知IDのみ採用。
       const b = localStorage.getItem(BUREAU_KEY);
-      if (b) setBureau(b);
+      if (b && BUREAUS_INFO.some((x) => x.id === b)) setBureau(b);
+      else if (b) localStorage.removeItem(BUREAU_KEY);
     } catch {
       /* ignore */
     }
@@ -364,8 +367,24 @@ export default function Page() {
       )}
 
       <footer className="app-footer no-print">
-        データ更新日 2026-06-14 ／ 出典：厚労省告示第69〜71号・通知 保医発0305第6〜8号・各地方厚生局
-        届出様式。本ツールは届出可否の目安を示すもので、最終判断は厚生局の確認によります。
+        <p>
+          データ更新日 2026-06-14 ／ 出典：厚労省告示第69〜71号・通知 保医発0305第6〜8号・各地方厚生局
+          届出様式。本ツールは届出可否の<strong>目安</strong>を示すもので、最終判断は厚生局の確認によります。
+        </p>
+        <p>
+          本ツールは個人が公開情報（告示・通知・各厚生局の届出様式）を整理して作成したもので、
+          <strong>医療・診療報酬の専門家による監修を受けていません</strong>。内容の正確性・最新性を保証するものではなく、
+          判定・届出の最終的な責任は利用者（医療機関）に帰属します。
+        </p>
+        <p>
+          入力内容は<strong>お使いの端末内（localStorage）にのみ保存</strong>され、サーバーには送信されません
+          （AI解説の利用時のみ、基準名と判定結果のみを送信し、患者情報・実績件数は送信しません）。
+        </p>
+        <p className="footer-links">
+          <a href="/terms">利用規約・免責事項</a>
+          <span aria-hidden> ・ </span>
+          <a href="/privacy">プライバシーポリシー</a>
+        </p>
       </footer>
     </div>
   );

@@ -100,12 +100,14 @@ export default function RevenueSim({ standards }: Props) {
                   min={0}
                   value={counts[line.item] ?? 0}
                   disabled={line.excluded}
-                  onChange={(e) =>
-                    setCounts((prev) => ({
-                      ...prev,
-                      [line.item]: e.target.value === "" ? 0 : Number(e.target.value),
-                    }))
-                  }
+                  onChange={(e) => {
+                    // 指数表記(1e500→Infinity)・負数・NaN を弾き、有限の0以上にクランプする。
+                    // 未クランプだと収益試算が ¥∞/マイナス計上となり、排他グループの
+                    // 勝者選定（最高点の採用）も汚染されるため。
+                    const n = Number(e.target.value);
+                    const safe = e.target.value === "" || !Number.isFinite(n) || n < 0 ? 0 : n;
+                    setCounts((prev) => ({ ...prev, [line.item]: safe }));
+                  }}
                   aria-label={`${line.item} の月間回数`}
                 />
               </td>
