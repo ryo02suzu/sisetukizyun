@@ -378,7 +378,7 @@ export const standards: DentalFacilityStandard[] = [
     ],
     forms: {
       todokede_form: "別添2",
-      attachment_forms: ["様式95"],
+      attachment_forms: ["様式95〜100"],
       attachments: ["賃金改善計画書", "対象職員数・賃金改善額がわかる資料（毎年8月実績報告）"],
       // ベースアップ評価料は電子申請・届出システムでは受け付けず、専用メールにExcel様式を添付して提出。
       e_application_available: false,
@@ -614,7 +614,6 @@ export const standards: DentalFacilityStandard[] = [
     },
     verify_flags: [
       "令和8年の訪問診療実績要件（選択制）の回数は解説一致だが告示原本（別添1 第14）で要最終照合",
-      "整理番号（歯援診1=2-92/2=2-93・東海北陸令和8で確認）は他局で要確認",
       "歯科衛生士の最低配置数の明示要件",
     ],
     last_updated: "2026-06-14",
@@ -880,11 +879,11 @@ export const standards: DentalFacilityStandard[] = [
     ],
     forms: {
       todokede_form: "別添2",
-      attachment_forms: [],
+      attachment_forms: ["様式74"],
       attachments: ["歯科医師の経験を証する資料"],
       e_application_available: null,
     },
-    transitional: "R6からの継続。整理番号2-538（令和8・近畿届出様式一覧で確認）。届出は別添2のみ（追加様式なし）。GTR1次手術時は歯根面レーザー応用加算+60点。",
+    transitional: "R6からの継続。整理番号2-538（令和8・近畿届出様式一覧で確認）。届出は別添2＋様式74。GTR1次手術時は歯根面レーザー応用加算+60点。",
     revenue_sim: {
       linked_items: [
         { item: "歯周組織再生誘導手術 1次手術", points_per_event: 840, default_monthly_count_hint: 2 },
@@ -987,7 +986,6 @@ export const standards: DentalFacilityStandard[] = [
       formula: "1100 × 月間算定回数 × 10円（一連につき）",
     },
     verify_flags: [
-      "整理番号2-86は東海北陸令和8で確認。他局の令和8整理番号は要確認",
       "令和8点数の据え置き確認",
     ],
     last_updated: "2026-06-14",
@@ -1100,8 +1098,6 @@ export const standards: DentalFacilityStandard[] = [
       formula: "46 × 月間算定回数 × 10円（月1回上限）",
     },
     verify_flags: [
-      "整理番号2-91は局別・要確認",
-      "様式17の4 PDF URLの実在検証",
       "研修主催団体の妥当性",
       "在宅歯科栄養サポートチーム等連携指導料(C001-7)算定月は算定不可（併算定制限）",
     ],
@@ -1163,7 +1159,6 @@ export const standards: DentalFacilityStandard[] = [
     },
     verify_flags: [
       "点数の令和8確定値（45点は令和6値）",
-      "整理番号2-101は局別・要確認",
       "対象患者は14疾患＋人工呼吸器・在宅酸素・感染症患者に限定。対象外算定は返戻リスク",
       "周術期等口腔機能管理料・医科D220算定日は算定不可（併算定制限）",
     ],
@@ -1216,7 +1211,6 @@ export const standards: DentalFacilityStandard[] = [
       formula: "(100 × 歯冠補綴物 + 330 × ブリッジ5歯以下 + 440 × ブリッジ6歯以上) × 10円",
     },
     verify_flags: [
-      "令和8整理番号2-580・様式81 PDF URLの最終検証（推定を含む）",
       "点数の令和8確定値（令和6値）",
     ],
     last_updated: "2026-06-14",
@@ -1310,7 +1304,7 @@ export const standards: DentalFacilityStandard[] = [
     id: "byo_shoshin",
     official_name: "地域歯科診療支援病院歯科初診料に係る施設基準",
     common_name: "病初診",
-    code_number: "1-17（要確認）",
+    code_number: "1-17",
     notification_ref: "通知（地域歯科診療支援病院歯科初診料）",
     category: "基本診療料",
     new_or_revised_r8: "継続",
@@ -1368,7 +1362,6 @@ export const standards: DentalFacilityStandard[] = [
     },
     verify_flags: [
       "病院向け基準。詳細な施設基準要件（人員・実績・連携）は告示・通知で要確認",
-      "整理番号は局別・要確認",
     ],
     last_updated: "2026-06-14",
     source_version: "告示第70号（点数はr08歯科点数表 A000/A002）",
@@ -1567,7 +1560,7 @@ export const standards: DentalFacilityStandard[] = [
     official_name: "在宅療養支援歯科病院に係る施設基準",
     common_name: "歯援病",
     code_number: "2-94",
-    code_number_bureau: "近畿 令和8（要確認）",
+    code_number_bureau: "令和8（全国共通・近畿届出様式一覧で確認）",
     notification_ref: "通知 別添1-14 系",
     category: "特掲診療料",
     new_or_revised_r8: "継続",
@@ -1612,7 +1605,7 @@ export const standards: DentalFacilityStandard[] = [
       formula: "100 × 月間訪問関連算定回数 × 10円",
       exclusive_group: "shien_type",
     },
-    verify_flags: ["整理番号2-94は局別・要確認", "病院向け基準。実績・連携要件は告示で要確認"],
+    verify_flags: ["病院向け基準。実績・連携要件は告示で要確認"],
     last_updated: "2026-06-14",
     source_version: "告示第71号・保医発0305第8号",
     sources: [KINKI_TOKUTEI, "https://kouseikyoku.mhlw.go.jp/kinki/r6-t18.pdf"],
@@ -1687,8 +1680,8 @@ export const officialForms: Record<string, OfficialForms> = {
     bureau: "近畿 令和8",
     common: { label: "共通届出書 別添2", url: BESSHI2 },
     forms: [
+      { label: "別添2（歯外在ベ1）", url: KINKI_PDF + "r8-2-611.pdf" },
       { label: "様式95〜100（統合）", url: KINKI_PDF + "r8-t95-100.pdf" },
-      { label: "様式94（特別事情届出書）", url: KINKI_PDF + "r8-t94.pdf" },
     ],
   },
   kokan_kyo: {
@@ -1744,7 +1737,10 @@ export const officialForms: Record<string, OfficialForms> = {
   gtr: {
     bureau: "近畿 令和8",
     common: { label: "共通届出書 別添2", url: BESSHI2 },
-    forms: [{ label: "別添2（GTR）", url: KINKI_PDF + "r8-2-538.pdf" }],
+    forms: [
+      { label: "別添2（GTR）", url: KINKI_PDF + "r8-2-538.pdf" },
+      { label: "様式74", url: KINKI_PDF + "r8-t74.pdf" },
+    ],
   },
   laser_koku_nenmaku: {
     bureau: "近畿 令和8",
@@ -1875,18 +1871,24 @@ export const BUREAUS_INFO: BureauInfo[] = [
 
 export const DEFAULT_BUREAU = "kinki";
 
-// 様式94（特別事情届出書）を「単独PDF」で持つ局。他局は様式95〜100の統合PDFに同梱。
-const STANDALONE_94_BUREAUS = new Set(["kinki", "kyushu"]);
+// 様式PDFのファイル名（＝整理番号）はほぼ全国共通だが、一部の様式は局により採番が異なり
+// パス差し替えでは取得できない。47様式×8局=376件のHTTP実機検証（2026-06）で確認した
+// 「パス差し替えが404になる (ファイル, 局)」の例外マップ。該当する局では直リンクを出さず、
+// その局の届出様式一覧で確認するよう促す（デッドリンクを出さないため）。
+// 現状の例外：ベースアップ評価料の別添2（r8-2-611）は北海道・九州で別番号。
+const FORM_PATHSWAP_UNAVAILABLE: Record<string, Set<string>> = {
+  "r8-2-611.pdf": new Set(["hokkaido", "kyushu"]),
+};
 
 export function getBureauInfo(bureauId: string): BureauInfo {
   return BUREAUS_INFO.find((b) => b.id === bureauId) ?? BUREAUS_INFO.find((b) => b.id === "kinki")!;
 }
 
 /**
- * id と管轄局で公式様式を引く。様式PDFのファイル名は全国共通のため、
+ * id と管轄局で公式様式を引く。様式PDFのファイル名は概ね全国共通のため、
  * 近畿のURLのホストパスを選択局に差し替えて返す。
- * 様式94だけは近畿・九州のみ単独PDFのため、他局では単独リンクを落とし、
- * 統合PDF（様式95〜100）のラベルに「94含む」を補記する。
+ * 一部の様式は局により採番が異なる（FORM_PATHSWAP_UNAVAILABLE）。該当する局では
+ * デッドリンクを避け、その局の届出様式一覧（局トップ）への誘導に置き換える。
  */
 export function getOfficialForms(id: string, bureauId: string = DEFAULT_BUREAU): OfficialForms | undefined {
   const base = officialForms[id];
@@ -1895,17 +1897,14 @@ export function getOfficialForms(id: string, bureauId: string = DEFAULT_BUREAU):
   const label = `${info.name} 令和8`;
   if (info.id === "kinki") return { ...base, bureau: label };
   const swap = (u: string) => u.replace("/kinki/", `/${info.id}/`);
-  const has94 = STANDALONE_94_BUREAUS.has(info.id);
-  const forms: { label: string; url: string }[] = [];
-  for (const f of base.forms) {
+  const forms = base.forms.map((f) => {
     const file = f.url.split("/").pop() ?? "";
-    if (file === "r8-t94.pdf" && !has94) continue; // この局では統合PDFに同梱
-    const lbl =
-      file === "r8-t95-100.pdf" && !has94
-        ? "様式94〜100（統合・特別事情届出書を含む）"
-        : f.label;
-    forms.push({ label: lbl, url: swap(f.url) });
-  }
+    if (FORM_PATHSWAP_UNAVAILABLE[file]?.has(info.id)) {
+      // この局では当該様式の整理番号が異なる。直リンクの代わりに様式一覧へ誘導。
+      return { label: `${f.label}（この局では整理番号が異なります→様式一覧で確認）`, url: info.url };
+    }
+    return { label: f.label, url: swap(f.url) };
+  });
   return {
     bureau: label,
     common: { label: base.common.label, url: swap(base.common.url) },

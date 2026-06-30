@@ -329,6 +329,31 @@ test("composite_or unmet: only the parent summary label is counted, not each chi
   assert.equal(r.unmetLabels.length, 1, "gapCount inflation regression: composite counts as 1");
 });
 
+test("official forms: GTR includes 別添2(2-538) and 様式74; baseup_1 includes 別添2(2-611)", async () => {
+  const { getOfficialForms } = await import("../data/standards");
+  const gtr = getOfficialForms("gtr", "kinki")!;
+  const gtrFiles = [gtr.common, ...gtr.forms].map((f) => f.url.split("/").pop());
+  assert.ok(gtrFiles.includes("r8-2-538.pdf"), "GTR 別添2 = r8-2-538");
+  assert.ok(gtrFiles.includes("r8-t74.pdf"), "GTR 様式74 = r8-t74");
+  assert.ok(!gtrFiles.includes("r8-2-484.pdf"), "old wrong GTR form removed");
+  const bu = getOfficialForms("baseup_1", "kinki")!;
+  const buFiles = bu.forms.map((f) => f.url.split("/").pop());
+  assert.ok(buFiles.includes("r8-2-611.pdf"), "baseup_1 別添2 = r8-2-611");
+  assert.ok(!buFiles.includes("r8-t94.pdf"), "spurious 様式94 removed");
+});
+
+test("official forms: path-swap exclusion falls back to bureau index (no dead link)", async () => {
+  const { getOfficialForms } = await import("../data/standards");
+  // r8-2-611 は北海道・九州では別番号。直リンクではなく局トップへ誘導する。
+  const hok = getOfficialForms("baseup_1", "hokkaido")!;
+  const besshi = hok.forms.find((f) => f.label.includes("別添2"))!;
+  assert.ok(besshi.url.endsWith("/hokkaido/"), "excluded form points to bureau index");
+  assert.ok(!besshi.url.includes("r8-2-611"), "no dead r8-2-611 link on hokkaido");
+  // 様式95〜100 は全局で取得可能なのでパス差し替えのまま。
+  const yoshiki = hok.forms.find((f) => f.label.includes("様式95"))!;
+  assert.ok(yoshiki.url.includes("/hokkaido/r8-t95-100.pdf"));
+});
+
 test("empty-requirements standard is not auto-eligible (defensive guard)", async () => {
   const { evaluateStandard } = await import("../lib/engine");
   const empty = {
